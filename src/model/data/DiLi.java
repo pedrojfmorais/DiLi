@@ -19,7 +19,7 @@ public class DiLi {
 
     public Message authenticate(String email, String password) throws SQLException {
         if(!connDB.verifyLogin(email, password))
-            return new Message("passowrd", MessageType.ERROR, "Invalid email or password.");
+            return new Message("password", MessageType.ERROR, "Invalid email or password.");
 
         loggedAccount = connDB.getUserInformation(email);
         return new Message(null, MessageType.ERROR, "User logged in.");

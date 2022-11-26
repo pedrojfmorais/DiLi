@@ -5,6 +5,7 @@ import model.data.user.UserType;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ConnDB {
     private final static String DATABASE_URL = "jdbc:sqlite:DiLi.db";
@@ -134,7 +135,9 @@ public class ConnDB {
         statement.close();
     }
 
-    public void insertBook(String title, String author, String synopsis, String language, ArrayList<String> genres, boolean availability, double costPerDownload, String downloadLink) throws SQLException{
+    public void insertBook(String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           String downloadLink) throws SQLException{
         // TODO
 
     }
