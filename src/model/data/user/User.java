@@ -37,4 +37,14 @@ public class User {
     public UserType getTypeUser() {
         return typeUser;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", typeUser=" + typeUser +
+                '}';
+    }
 }
