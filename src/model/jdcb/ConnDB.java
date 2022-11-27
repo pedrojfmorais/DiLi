@@ -153,6 +153,7 @@ public class ConnDB {
         for(String format : downloadLink.keySet()) {
             sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
             int idFormat = statement.executeQuery(sqlQuery).getInt("id");
+            //TODO IF FORMAT DOESN'T EXIST
 
 
             sqlQuery = "INSERT INTO digital_book (url) VALUES " +
@@ -168,6 +169,7 @@ public class ConnDB {
 
         sqlQuery = "SELECT * FROM language WHERE name LIKE '" + language + "'";
         int idLanguage = (statement.executeQuery(sqlQuery)).getInt("id");
+        //TODO IF LANGUAGE DOESN'T EXIST
 
         sqlQuery = "INSERT INTO book_language VALUES " +
                 "('" + idBook + "', '" + idLanguage + "')";
@@ -177,17 +179,6 @@ public class ConnDB {
 
     }
 
-    public void insertBookk() {
-
-        Map<String, String> downloadLink = new HashMap<String, String>();
-        downloadLink.put("pdf", "linkPdf");
-        downloadLink.put("epub", "linkEpub");
-        downloadLink.put("outro", "linkOutro");
-
-        for(String file : downloadLink.keySet()) {
-            System.out.println(file);
-        }
-    }
 
     public void updateBook(String title, String author, String synopsis, String language,
                            ArrayList<String> genres, boolean availability, double costPerDownload,
