@@ -5,7 +5,9 @@ import model.data.user.UserType;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConnDB {
     private final static String DATABASE_URL = "jdbc:sqlite:DiLi.db";
@@ -137,12 +139,60 @@ public class ConnDB {
 
     public void insertBook(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
-                           String downloadLink) throws SQLException{
+                           Map<String, String> downloadLink) throws SQLException{
         // TODO
+
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "INSERT INTO book ( title, synopsis, author, availability, price ) VALUES (" +
+                "'" + title + "','" + synopsis + "','" + author + "','" + availability + "','" + costPerDownload + "')";
+
+        statement.executeUpdate(sqlQuery);
+        int idBook = ((ResultSet)statement.getGeneratedKeys()).getInt(1);
+
+        for(String format : downloadLink.keySet()) {
+            sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
+            int idFormat = statement.executeQuery(sqlQuery).getInt("id");
+
+
+            sqlQuery = "INSERT INTO digital_book (url) VALUES " +
+                    "('" + downloadLink.get(format) + "')";
+            statement.executeUpdate(sqlQuery);
+            int idDigitalBook = ((ResultSet)statement.getGeneratedKeys()).getInt(1);
+
+
+            sqlQuery = "INSERT INTO book_digitalBook_format VALUES " +
+                    "('" + idBook + "', '" + idFormat + "', '" + idDigitalBook + "')";
+            statement.executeUpdate(sqlQuery);
+        }
+
+        sqlQuery = "SELECT * FROM language WHERE name LIKE '" + language + "'";
+        int idLanguage = (statement.executeQuery(sqlQuery)).getInt("id");
+
+        sqlQuery = "INSERT INTO book_language VALUES " +
+                "('" + idBook + "', '" + idLanguage + "')";
+        statement.executeUpdate(sqlQuery);
+
+
 
     }
 
-    public void updateBook(String title, String author, String synopsis, String language, ArrayList<String> genres, boolean availability, double costPerDownload, String downloadLink) {
+    public void insertBookk() {
+
+        Map<String, String> downloadLink = new HashMap<String, String>();
+        downloadLink.put("pdf", "linkPdf");
+        downloadLink.put("epub", "linkEpub");
+        downloadLink.put("outro", "linkOutro");
+
+        for(String file : downloadLink.keySet()) {
+            System.out.println(file);
+        }
+    }
+
+    public void updateBook(String title, String author, String synopsis, String language,
+                           ArrayList<String> genres, boolean availability, double costPerDownload,
+                           String downloadLink) {
         // TODO
+
     }
 }

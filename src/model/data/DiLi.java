@@ -97,13 +97,13 @@ public class DiLi {
 
     public Message addBook(String title, String author, String synopsis,
                            String language, ArrayList<String> genres, boolean availability,
-                           double costPerDownload, String downloadLink) {
+                           double costPerDownload, String downloadLink) throws SQLException {
         Message message = checkBookFields(title, author, synopsis, language, genres, costPerDownload);
 
         if(message.type.equals(MessageType.ERROR))
             return message;
 
-        connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
+        //connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
