@@ -175,6 +175,14 @@ public class ConnDB {
                 "('" + idBook + "', '" + idLanguage + "')";
         statement.executeUpdate(sqlQuery);
 
+        for(String genre : genres) {
+
+            sqlQuery = "SELECT COUNT(1) FROM genre WHERE name LIKE '" + genre + "'";
+
+
+
+        }
+
 
 
     }
