@@ -11,5 +11,5 @@ public class Book {
     private boolean availability;
     private double costPerDownload;
     private String downloadLink;
-    // Book's image
+    private String imagePath;
 }
