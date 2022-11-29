@@ -1,8 +1,10 @@
 package model.data;
 
+import model.data.book.Book;
 import model.data.user.User;
 import model.jdcb.ConnDB;
 
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -159,7 +161,22 @@ public class DiLi {
         if(message.type.equals(MessageType.ERROR))
             return message;
 
-        connDB.updateBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
+        //connDB.updateBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
+    }
+
+    public ArrayList<Book> search(String search) throws SQLException
+    {
+        return connDB.search(search);
+    }
+
+    public Message downloadBook(Book book) throws SQLException
+    {
+        if(connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
+            //TODO Download
+
+            return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
+        }
+        return new Message(null, MessageType.ERROR, "Book already downloaded");
     }
 }

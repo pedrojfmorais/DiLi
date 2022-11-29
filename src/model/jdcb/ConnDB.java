@@ -1,8 +1,10 @@
 package model.jdcb;
 
+import model.data.book.Book;
 import model.data.user.User;
 import model.data.user.UserType;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -139,31 +141,25 @@ public class ConnDB {
 
     public void insertBook(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
-                           Map<String, String> downloadLink) throws SQLException{
+                           Map<String, String> downloadLink, String imagePath) throws SQLException{
         // TODO
 
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "INSERT INTO book ( title, synopsis, author, availability, price ) VALUES (" +
-                "'" + title + "','" + synopsis + "','" + author + "','" + availability + "','" + costPerDownload + "')";
+        String sqlQuery = "INSERT INTO book ( title, synopsis, author, availability, costPerDownload, image_path ) VALUES (" +
+                "'" + title + "','" + synopsis + "','" + author + "','"
+                + availability + "','" + costPerDownload + "','" + imagePath + "')";
 
         statement.executeUpdate(sqlQuery);
-        int idBook = ((ResultSet)statement.getGeneratedKeys()).getInt(1);
+        int idBook = statement.getGeneratedKeys().getInt(1);
 
         for(String format : downloadLink.keySet()) {
             sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
             int idFormat = statement.executeQuery(sqlQuery).getInt("id");
             //TODO IF FORMAT DOESN'T EXIST
 
-
-            sqlQuery = "INSERT INTO digital_book (url) VALUES " +
-                    "('" + downloadLink.get(format) + "')";
-            statement.executeUpdate(sqlQuery);
-            int idDigitalBook = ((ResultSet)statement.getGeneratedKeys()).getInt(1);
-
-
-            sqlQuery = "INSERT INTO book_digitalBook_format VALUES " +
-                    "('" + idBook + "', '" + idFormat + "', '" + idDigitalBook + "')";
+            sqlQuery = "INSERT INTO book_file VALUES " +
+                    "('" + idBook + "', '" + idFormat + "', '" + downloadLink.get(format) + "')";
             statement.executeUpdate(sqlQuery);
         }
 
@@ -175,23 +171,243 @@ public class ConnDB {
                 "('" + idBook + "', '" + idLanguage + "')";
         statement.executeUpdate(sqlQuery);
 
-        for(String genre : genres) {
+        if(genres != null)
+            for(String genre : genres) {
 
-            sqlQuery = "SELECT COUNT(1) FROM genre WHERE name LIKE '" + genre + "'";
+                sqlQuery = "SELECT id FROM genre WHERE name LIKE '" + genre + "'";
+                int idGenre = statement.executeQuery(sqlQuery).getInt(1);
+                if(idGenre == 0) { // No genre with the name
+                    //TODO Create genre
+                    sqlQuery = "INSERT INTO genre (name) VALUES ('" + genre + "')";
+                    statement.executeUpdate(sqlQuery);
+                    idGenre = statement.getGeneratedKeys().getInt(1);
+                }
 
+                //TODO Associate
+                sqlQuery = "INSERT INTO book_genre ( book_id, genre_id ) VALUES ('" + idBook + "', '" + idGenre + "')";
+                statement.executeUpdate(sqlQuery);
 
+            }
 
-        }
-
-
+        statement.close();
 
     }
 
 
-    public void updateBook(String title, String author, String synopsis, String language,
-                           ArrayList<String> genres, boolean availability, double costPerDownload,
-                           String downloadLink) {
+    public void updateBook(int id, String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           Map<String, String> downloadLink, String imagePath) throws SQLException {
         // TODO
 
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery;
+
+        sqlQuery = String.format("UPDATE book SET " +
+                "title='%s', " +
+                "synopsis='%s', " +
+                "author='%s', " +
+                "availability='%b', " +
+                "costPerDownload='%f', " +
+                "image_path='%s' WHERE id='%d'",
+                title, synopsis, author, availability, costPerDownload, id, imagePath);
+        statement.executeUpdate(sqlQuery);
+
+        sqlQuery = "DELETE FROM book_genre WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+
+        if(genres != null)
+            for(String genre : genres) {
+
+                sqlQuery = "SELECT id FROM genre WHERE name LIKE '" + genre + "'";
+                int idGenre = statement.executeQuery(sqlQuery).getInt(1);
+                if(idGenre == 0) { // No genre with the name
+                    //TODO Create genre
+                    sqlQuery = "INSERT INTO genre (name) VALUES ('" + genre + "')";
+                    statement.executeUpdate(sqlQuery);
+                    idGenre = statement.getGeneratedKeys().getInt(1);
+                }
+
+                //TODO Associate
+                sqlQuery = "INSERT INTO book_genre ( book_id, genre_id ) VALUES ('" + id + "', '" + idGenre + "')";
+                statement.executeUpdate(sqlQuery);
+
+            }
+
+        sqlQuery = "DELETE FROM book_language WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+
+        sqlQuery = "SELECT * FROM language WHERE name LIKE '" + language + "'";
+        int idLanguage = (statement.executeQuery(sqlQuery)).getInt("id");
+        //TODO IF LANGUAGE DOESN'T EXIST
+
+        sqlQuery = "INSERT INTO book_language VALUES " +
+                "('" + id + "', '" + idLanguage + "')";
+        statement.executeUpdate(sqlQuery);
+
+
+
+        sqlQuery = "DELETE FROM book_file WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+
+        for(String format : downloadLink.keySet()) {
+            sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
+            int idFormat = statement.executeQuery(sqlQuery).getInt("id");
+            //TODO IF FORMAT DOESN'T EXIST
+
+            sqlQuery = "INSERT INTO book_file VALUES " +
+                    "('" + id + "', '" + idFormat + "', '" + downloadLink.get(format) + "')";
+            statement.executeUpdate(sqlQuery);
+        }
+        statement.close();
+
+
+
     }
+
+    public void clearDB(String passcode, boolean bdbf, boolean bg, boolean bl, boolean b, boolean g, boolean bdown) throws SQLException {
+        if(passcode.equals("isto")) {
+
+            Statement statement = dbConn.createStatement();
+            String sqlQuery;
+            if(bdbf) {
+                sqlQuery = "DELETE FROM book_file";
+                statement.executeUpdate(sqlQuery);
+            }
+            if(bg) {
+                sqlQuery = "DELETE FROM book_genre";
+                statement.executeUpdate(sqlQuery);
+            }
+            if(bl) {
+                sqlQuery = "DELETE FROM book_language";
+                statement.executeUpdate(sqlQuery);
+            }
+            if(bdown) {
+                sqlQuery = "DELETE FROM book_download";
+                statement.executeUpdate(sqlQuery);
+            }
+            if(b) {
+                sqlQuery = "DELETE FROM book";
+                statement.executeUpdate(sqlQuery);
+            }
+            if(g) {
+                sqlQuery = "DELETE FROM genre";
+                statement.executeUpdate(sqlQuery);
+            }
+            statement.close();
+
+        }
+    }
+
+    public List<String> getBookGenres(int bookId) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name FROM book_genre, genre " +
+                "WHERE book_genre.genre_id = genre.id AND " +
+                "book_id=" + bookId;
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        while(resultSet.next()) {
+            list.add(resultSet.getString(1));
+        }
+        statement.close();
+        resultSet.close();
+        return list;
+    }
+    public String getBookLanguage(int bookId) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name FROM book_language, language " +
+                "WHERE book_language.language_id = language.id AND " +
+                "book_id=" + bookId;
+        statement.close();
+        return statement.executeQuery(sqlQuery).getString(1);
+    }
+    public Map<String, String> getBookDownloadFile(int bookId) throws SQLException {
+        HashMap<String, String> map = new HashMap<>();
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name, url FROM book_file, format " +
+                "WHERE book_file.format_id = format.id AND " +
+                "book_id=" + bookId;
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        while(resultSet.next()) {
+            map.put(resultSet.getString("name"), resultSet.getString("url"));
+        }
+        statement.close();
+        resultSet.close();
+        return map;
+    }
+
+    public int getBookDownloadCounter(int bookId) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT COUNT(*) FROM book_download WHERE book_id=" + bookId;
+        return statement.executeQuery(sqlQuery).getInt(1);
+
+    }
+
+    public boolean canDownloadBook(int bookId, String email) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT COUNT(*) FROM book_download WHERE " +
+                "book_id=" + bookId + " AND user_email='" + email + "'";
+        return statement.executeQuery(sqlQuery).getInt(1) == 0;
+
+    }
+    public ArrayList<Book> search(String search) throws SQLException {
+        ArrayList<Book> bookArrayList = new ArrayList<>();
+        Book book = null;
+
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT * FROM book " +
+                "WHERE title LIKE '%" + search + "%' " +
+                "OR author LIKE  '%" + search + "%'";
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        while(resultSet.next()) {
+            int bookId = resultSet.getInt("id");
+            book = new Book(bookId,
+                    resultSet.getString("title"),
+                    resultSet.getString("author"),
+                    resultSet.getString("synopsis"),
+                    getBookLanguage(bookId),
+                    getBookGenres(bookId),
+                    resultSet.getBoolean("availability"),
+                    resultSet.getDouble("costPerDownload"),
+                    getBookDownloadFile(bookId),
+                    resultSet.getString("image_path"));
+            bookArrayList.add(book);
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return bookArrayList;
+    }
+
+    public Book getBookById(int id) throws SQLException {
+        Book book = null;
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT * FROM book " + "WHERE id='" + id + "'";
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        while(resultSet.next()) {
+            book = new Book(id,
+                    resultSet.getString("title"),
+                    resultSet.getString("author"),
+                    resultSet.getString("synopsis"),
+                    getBookLanguage(id),
+                    getBookGenres(id),
+                    resultSet.getBoolean("availability"),
+                    resultSet.getDouble("costPerDownload"),
+                    getBookDownloadFile(id),
+                    resultSet.getString("image_path"));
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return book;
+    }
+
 }
