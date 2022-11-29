@@ -24,7 +24,7 @@ public class DiLi {
             return new Message("password", MessageType.ERROR, "Invalid email or password.");
 
         loggedAccount = connDB.getUserInformation(email);
-        return new Message(null, MessageType.ERROR, "User logged in.");
+        return new Message(null, MessageType.SUCCESS, "User logged in.");
     }
 
     public Message createLibrarian(String name, String email, String password) throws SQLException {

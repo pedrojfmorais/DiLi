@@ -12,10 +12,15 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class DiLiTest {
 
+    public boolean wasSuccessful(Message msg) {
+        return msg.getType() == MessageType.SUCCESS;
+    }
+
     @ParameterizedTest
     @MethodSource
     void authenticateTrue(String email, String password) throws SQLException {
-        assertNotNull(new DiLi().authenticate(email, password));
+        // assertNotNull(new DiLi().authenticate(email, password));
+        assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
     }
 
     public static Stream<Arguments> authenticateTrue() {
@@ -28,7 +33,8 @@ class DiLiTest {
     @ParameterizedTest
     @MethodSource
     void authenticateFalse(String email, String password) throws SQLException {
-        assertNull(new DiLi().authenticate(email, password));
+        //assertNull(new DiLi().authenticate(email, password));
+        assertFalse(wasSuccessful(new DiLi().authenticate(email, password)));
     }
 
     public static Stream<Arguments> authenticateFalse() {

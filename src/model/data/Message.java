@@ -11,6 +11,10 @@ public class Message {
         this.message = message;
     }
 
+    public MessageType getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return message;
