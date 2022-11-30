@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Book {
-    private int id;
+    private final int id;
     private String title;
     private String author;
     private String synopsis;
