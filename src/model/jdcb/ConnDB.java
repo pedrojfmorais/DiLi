@@ -24,6 +24,7 @@ public class ConnDB {
             dbConn.close();
     }
 
+
     public boolean verifyLogin(String email, String password) throws SQLException {
         boolean result = false;
         Statement statement = dbConn.createStatement();
@@ -155,7 +156,9 @@ public class ConnDB {
 
         for(String format : downloadLink.keySet()) {
             sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
-            int idFormat = statement.executeQuery(sqlQuery).getInt("id");
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            int idFormat = resultSet.getInt("id");
+            resultSet.close();
             //TODO IF FORMAT DOESN'T EXIST
 
             sqlQuery = "INSERT INTO book_file VALUES " +
@@ -175,7 +178,9 @@ public class ConnDB {
             for(String genre : genres) {
 
                 sqlQuery = "SELECT id FROM genre WHERE name LIKE '" + genre + "'";
-                int idGenre = statement.executeQuery(sqlQuery).getInt(1);
+                ResultSet resultSet = statement.executeQuery(sqlQuery);
+                int idGenre = resultSet.getInt(1);
+                resultSet.close();
                 if(idGenre == 0) { // No genre with the name
                     //TODO Create genre
                     sqlQuery = "INSERT INTO genre (name) VALUES ('" + genre + "')";
@@ -220,7 +225,9 @@ public class ConnDB {
             for(String genre : genres) {
 
                 sqlQuery = "SELECT id FROM genre WHERE name LIKE '" + genre + "'";
-                int idGenre = statement.executeQuery(sqlQuery).getInt(1);
+                ResultSet resultSet = statement.executeQuery(sqlQuery);
+                int idGenre = resultSet.getInt(1);
+                resultSet.close();
                 if(idGenre == 0) { // No genre with the name
                     //TODO Create genre
                     sqlQuery = "INSERT INTO genre (name) VALUES ('" + genre + "')";
@@ -252,7 +259,9 @@ public class ConnDB {
 
         for(String format : downloadLink.keySet()) {
             sqlQuery = "SELECT * FROM format WHERE name LIKE '" + format + "'";
-            int idFormat = statement.executeQuery(sqlQuery).getInt("id");
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            int idFormat = resultSet.getInt("id");
+            resultSet.close();
             //TODO IF FORMAT DOESN'T EXIST
 
             sqlQuery = "INSERT INTO book_file VALUES " +
@@ -266,7 +275,7 @@ public class ConnDB {
     }
 
     public void clearDB(String passcode, boolean bdbf, boolean bg, boolean bl, boolean b, boolean g, boolean bdown) throws SQLException {
-        if(passcode.equals("isto")) {
+        if(passcode.equals("test")) {
 
             Statement statement = dbConn.createStatement();
             String sqlQuery;
@@ -287,6 +296,8 @@ public class ConnDB {
                 statement.executeUpdate(sqlQuery);
             }
             if(b) {
+                sqlQuery = "DELETE FROM rating_review";
+                statement.executeUpdate(sqlQuery);
                 sqlQuery = "DELETE FROM book";
                 statement.executeUpdate(sqlQuery);
             }
@@ -296,6 +307,22 @@ public class ConnDB {
             }
             statement.close();
 
+        }
+    }
+    public void clearLibrarians(String passcode) throws SQLException {
+        if(passcode.equals("test")) {
+            Statement statement = dbConn.createStatement();
+            String sqlQuery = "DELETE FROM librarian";
+            statement.executeUpdate(sqlQuery);
+            statement.close();
+        }
+    }
+    public void clearUsers(String passcode) throws SQLException {
+        if(passcode.equals("test")) {
+            Statement statement = dbConn.createStatement();
+            String sqlQuery = "DELETE FROM student_teacher";
+            statement.executeUpdate(sqlQuery);
+            statement.close();
         }
     }
 
@@ -318,8 +345,12 @@ public class ConnDB {
         String sqlQuery = "SELECT name FROM book_language, language " +
                 "WHERE book_language.language_id = language.id AND " +
                 "book_id=" + bookId;
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        String language = resultSet.getString(1);
+        resultSet.close();
         statement.close();
-        return statement.executeQuery(sqlQuery).getString(1);
+        return language;
     }
     public Map<String, String> getBookDownloadFile(int bookId) throws SQLException {
         HashMap<String, String> map = new HashMap<>();
@@ -339,7 +370,12 @@ public class ConnDB {
     public int getBookDownloadCounter(int bookId) throws SQLException {
         Statement statement = dbConn.createStatement();
         String sqlQuery = "SELECT COUNT(*) FROM book_download WHERE book_id=" + bookId;
-        return statement.executeQuery(sqlQuery).getInt(1);
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        int ret = resultSet.getInt(1);
+        statement.close();
+        resultSet.close();
+        return ret;
 
     }
 
@@ -347,8 +383,19 @@ public class ConnDB {
         Statement statement = dbConn.createStatement();
         String sqlQuery = "SELECT COUNT(*) FROM book_download WHERE " +
                 "book_id=" + bookId + " AND user_email='" + email + "'";
-        return statement.executeQuery(sqlQuery).getInt(1) == 0;
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        int ret = resultSet.getInt(1);
+        statement.close();
+        resultSet.close();
+        return ret == 0;
 
+    }
+    public void downloadBook(int bookId, String email) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "INSERT INTO book_download VALUES ('" + bookId + "', '" + email + "')";
+        System.out.println(1);
+        statement.executeUpdate(sqlQuery);
+        statement.close();
     }
     public ArrayList<Book> search(String search) throws SQLException {
         ArrayList<Book> bookArrayList = new ArrayList<>();

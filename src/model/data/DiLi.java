@@ -7,6 +7,8 @@ import model.jdcb.ConnDB;
 import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class DiLi {
@@ -97,20 +99,20 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Info uptated.");
     }
 
-    public Message addBook(String title, String author, String synopsis,
-                           String language, ArrayList<String> genres, boolean availability,
-                           double costPerDownload, String downloadLink) throws SQLException {
+    public Message addBook(String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           Map<String, String> downloadLink, String imagePath) throws SQLException {
         Message message = checkBookFields(title, author, synopsis, language, genres, costPerDownload);
 
         if(message.type.equals(MessageType.ERROR))
             return message;
 
-        //connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
+        connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
     private Message checkBookFields(String title, String author, String synopsis,
-                                    String language, ArrayList<String> genres,
+                                    String language, List<String> genres,
                                     double costPerDownload) {
 
         // The title, author, and language are text fields with a maximum of 100 characters each.
@@ -138,11 +140,11 @@ public class DiLi {
         if(title.length() > 100 )
             return new Message("title", MessageType.ERROR, "Title is too long.");
         if(author.length() > 100 )
-            return new Message("email", MessageType.ERROR, "Author is too long.");
+            return new Message("author", MessageType.ERROR, "Author is too long.");
         if(language.length() > 100 )
-            return new Message("password", MessageType.ERROR, "Language is too long.");
+            return new Message("language", MessageType.ERROR, "Language is too long.");
         if(synopsis.length() > 700 )
-            return new Message("password", MessageType.ERROR, "Synopsis is too long.");
+            return new Message("synopsis", MessageType.ERROR, "Synopsis is too long.");
         for(int i = 0; i < genres.size(); i++)
             if(genres.get(i).length() > 30)
                 return new Message("genre" + i, MessageType.ERROR, "Genre is too long.");
@@ -153,15 +155,15 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "");
     }
 
-    public Message updateBookInfo(String title, String author, String synopsis,
-                           String language, ArrayList<String> genres, boolean availability,
-                           double costPerDownload, String downloadLink) {
+    public Message updateBookInfo(int id, String title, String author, String synopsis, String language,
+                                  List<String> genres, boolean availability, double costPerDownload,
+                                  Map<String, String> downloadLink, String imagePath) throws SQLException {
         Message message = checkBookFields(title, author, synopsis, language, genres, costPerDownload);
 
         if(message.type.equals(MessageType.ERROR))
             return message;
 
-        //connDB.updateBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink);
+        connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
@@ -174,7 +176,16 @@ public class DiLi {
     {
         if(connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
             //TODO Download
-
+            connDB.downloadBook(book.getId(), loggedAccount.getEmail());
+            return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
+        }
+        return new Message(null, MessageType.ERROR, "Book already downloaded");
+    }
+    public Message downloadBookTest(Book book, String email) throws SQLException
+    {
+        if(connDB.canDownloadBook(book.getId(), email)) {
+            //TODO Download
+            connDB.downloadBook(book.getId(), email);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
