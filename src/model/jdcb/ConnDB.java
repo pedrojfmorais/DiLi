@@ -117,6 +117,18 @@ public class ConnDB {
         );
     }*/
 
+    public void insertLibrarianTest(String email, String name, String password, int id) throws SQLException {
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "INSERT INTO librarian (id, email, name, password) " +
+                "VALUES ('" + id + "','" + email + "','" + name + "','" + password + "')";
+
+        statement.executeUpdate(sqlQuery);
+
+        statement.close();
+
+        // return getLibrarian(((ResultSet)statement.getGeneratedKeys()).getInt("id"));
+    }
     public void insertLibrarian(String email, String name, String password) throws SQLException {
         Statement statement = dbConn.createStatement();
 
@@ -130,14 +142,15 @@ public class ConnDB {
         // return getLibrarian(((ResultSet)statement.getGeneratedKeys()).getInt("id"));
     }
 
-    public void updateLibrarian(int id, String username, String nome, String password) throws SQLException
+    public int updateLibrarian(int id, String email, String nome, String password) throws SQLException
     {
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "UPDATE librarian SET username='" + username + "', nome='" + nome + "', " +
+        String sqlQuery = "UPDATE librarian SET email='" + email + "', name='" + nome + "', " +
                 "password='" + password + "' WHERE id=" + id;
-        statement.executeUpdate(sqlQuery);
+        int rowsAffected = statement.executeUpdate(sqlQuery);
         statement.close();
+        return rowsAffected;
     }
 
     public void insertBook(String title, String author, String synopsis, String language,

@@ -30,7 +30,7 @@ public class DiLi {
     }
 
     public Message createLibrarian(String name, String email, String password) throws SQLException {
-        Message message = checkUserFields(name, email, password);
+        Message message = checkUserFields(name, email, password, false);
 
         if(message.type.equals(MessageType.ERROR))
             return message;
@@ -39,7 +39,11 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Librarian created.");
     }
 
-    private Message checkUserFields(String name, String email, String password) throws SQLException {
+    public Message checkUserFieldsTest(String name, String email, String password, boolean canEmailExist) throws SQLException {
+        return checkUserFields(name, email, password, canEmailExist);
+    }
+
+    private Message checkUserFields(String name, String email, String password, boolean canEmailExist) throws SQLException {
         // Check if fields are empty
         if(name.isBlank())
             return new Message("name", MessageType.ERROR, "Empty field.");
@@ -57,7 +61,13 @@ public class DiLi {
             return new Message("password", MessageType.ERROR, "Password is too long.");
 
         // Check if email is already used
-        if(connDB.getUserInformation(email) != null)
+        // if(connDB.getUserInformation(email) != null)
+        // if not null > user exists >>>> false
+        // canEmailExist = false
+        // If user exists, errors
+        System.out.println(connDB.getUserInformation(email));
+        System.out.println(canEmailExist);
+        if((connDB.getUserInformation(email) == null ) == canEmailExist)
             return new Message("email", MessageType.ERROR, "Email is already used.");
 
         // Check if email is of type @domain
@@ -66,18 +76,25 @@ public class DiLi {
 
         // Check password security
         if(!verifyPasswordSecurity(password))
-            return new Message("password", MessageType.ERROR, "Password must have: \n" +
-                    "At least 8 characters.\n" +
-                    "A mixture of both uppercase and lowercase letters.\n" +
-                    "A mixture of letters and numbers.\n" +
+            return new Message("password", MessageType.ERROR, "Password must have: " + System.lineSeparator() +
+                    "At least 8 characters." + System.lineSeparator() +
+                    "A mixture of both uppercase and lowercase letters." + System.lineSeparator() +
+                    "A mixture of letters and numbers." + System.lineSeparator() +
                     "At least one special character, e.g., ! @ # ? ].");
         return new Message(null, MessageType.SUCCESS, "");
     }
 
+    public boolean verifyEmailValidityTest(String email) {
+        return verifyEmailValidity(email);
+    }
     private boolean verifyEmailValidity(String email) {
-        return Pattern.compile("^(.+)@(.+)$").matcher(email).find();
+        // return Pattern.compile("^(.+)@(.+)$").matcher(email).find();
+        return Pattern.compile("[a-z0-9]+@[a-z]+\\.[a-z]{2,3}").matcher(email).find();
     }
 
+    public boolean verifyPasswordSecurityTest(String password) {
+        return verifyPasswordSecurity(password);
+    }
     private boolean verifyPasswordSecurity(String password) {
         // At least 8 characters.
         // A mixture of both uppercase and lowercase letters.
@@ -89,8 +106,18 @@ public class DiLi {
                 .find();
     }
 
+    public Message updateLibrarianInfoTest(int id, String name, String email, String password) throws SQLException {
+        Message message = checkUserFields(name, email, password, true);
+
+        if(message.type.equals(MessageType.ERROR))
+            return message;
+
+        connDB.updateLibrarian(id, name, email, password);
+        return new Message(null, MessageType.SUCCESS, "Info uptated.");
+    }
+
     public Message updateLibrarianInfo(String name, String email, String password) throws SQLException {
-        Message message = checkUserFields(name, email, password);
+        Message message = checkUserFields(name, email, password, true);
 
         if(message.type.equals(MessageType.ERROR))
             return message;

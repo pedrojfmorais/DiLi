@@ -2,10 +2,7 @@ package model.data;
 
 import model.data.book.Book;
 import model.jdcb.ConnDB;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,17 +23,16 @@ class DiLiTestLeaf {
         return msg.getType() == MessageType.SUCCESS;
     }
 
-    @BeforeAll
-    static void beforeAll() throws SQLException {
+    private static void clearDB() throws SQLException {
         new ConnDB().clearDB("test", true, true, true, true, true, true);
         new ConnDB().clearLibrarians("test");
         new ConnDB().clearUsers("test");
     }
-    @BeforeEach
-    public void beforeEach() throws SQLException {
+    private static void dbSeeder() throws SQLException {
 
         ConnDB conn = new ConnDB();
 
+        conn.insertLibrarianTest("a123456@isec.pt", "Marco", "!Qq123456789", 1);
         conn.insertLibrarian("a1234567@isec.pt", "Marco", "!Qq123456789");
         conn.insertLibrarian("a21280055321@isec.pt", "António", "!Qq123456789");
 
@@ -62,38 +58,395 @@ class DiLiTestLeaf {
         downloadLink.put("epub", "https://2zappmzhw3.pdcdn1.top/dl2.php?id=178205861&h=351217e7aed2625b1e321796d7cd8d0f&u=cache&ext=pdf&n=Kotlin%20for%20android%20developers%20learn%20kotlin%20the%20easy%20way%20while%20developing%20an%20android%20app");
         conn.insertBook("Book 2", "Jane Doe", "Learn to program Kotlin ", "English",
                 List.of("Programming", "Java", "Kotlin"), true, 0.105, downloadLink, "");
+    }
+    /*@BeforeAll
+    static void beforeAll() throws SQLException {
+        clearDB();
+    }
+    @BeforeEach
+    public void beforeEach() throws SQLException {
+
+        dbSeeder();
+        System.out.println("hm");
 
     }
     @AfterEach
     public void afterEach() throws SQLException {
-        new ConnDB().clearDB("test", true, true, true, true, true, true);
-        new ConnDB().clearLibrarians("test");
-        new ConnDB().clearUsers("test");
+        clearDB();
+    }*/
+
+
+    @Nested
+    class authenticate {
+        /*
+         * TODO
+         *  Authenticate:
+         *      connDB.verifyLogin(email, password)
+         *      connDB.getUserInformation(email)
+         *
+         *
+         */
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+        }
+        @ParameterizedTest
+        @MethodSource
+        void verifyLoginSuccess(String email, String password) throws SQLException {
+            // assertNotNull(new DiLi().authenticate(email, password));
+            // assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
+            assertTrue(new ConnDB().verifyLogin(email, password));
+        }
+
+        public static Stream<Arguments> verifyLoginSuccess() {
+            return Stream.of(
+                    arguments("a1234567@isec.pt", "!Qq123456789")
+                    //,arguments("a21280686@isec.pt", "pedro")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void verifyLoginFail(String email, String password) throws SQLException {
+            // assertNotNull(new DiLi().authenticate(email, password));
+            // assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
+            assertFalse(new ConnDB().verifyLogin(email, password));
+        }
+
+        public static Stream<Arguments> verifyLoginFail() {
+            return Stream.of(
+                    arguments("a123456722@isec.pt", "!Qq123456789"),
+                    arguments("", "!Qq123456789"),
+                    arguments("a123456722@isec.pt", ""),
+                    arguments("", "")
+                    //,arguments("a21280686@isec.pt", "pedro")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void getUserInformationSuccess(String email) throws SQLException {
+            assertNotNull(new ConnDB().getUserInformation(email));
+        }
+
+        public static Stream<Arguments> getUserInformationSuccess() {
+            return Stream.of(
+                    arguments("a1234567@isec.pt")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void getUserInformationFail(String email) throws SQLException {
+            assertNull(new ConnDB().getUserInformation(email));
+        }
+
+        public static Stream<Arguments> getUserInformationFail() {
+            return Stream.of(
+                    arguments("a123456722@isec.pt"),
+                    arguments("")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void authenticateSuccess(String email, String password) throws SQLException {
+            //assertNotNull(new DiLi().authenticate(email, password));
+            assertNotNull(new DiLi().authenticate(email, password));
+            assertEquals(MessageType.SUCCESS, (new DiLi().authenticate(email, password)).type);
+        }
+
+        public static Stream<Arguments> authenticateSuccess() {
+            return Stream.of(
+                    arguments("a1234567@isec.pt", "!Qq123456789")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void authenticateFail(String email, String password) throws SQLException {
+            assertNotNull(new DiLi().authenticate(email, password));
+            assertEquals(MessageType.ERROR, (new DiLi().authenticate(email, password)).type);
+        }
+
+        public static Stream<Arguments> authenticateFail() {
+            return Stream.of(
+                    arguments("a123456722@isec.pt", "!Qq123456789"),
+                    arguments("", "!Qq123456789"),
+                    arguments("a123456722@isec.pt", ""),
+                    arguments("", "")
+            );
+        }
     }
 
-    /*
-     * TODO
-     *  Authenticate:
-     *      connDB.verifyLogin(email, password)
-     *      connDB.getUserInformation(email)
-     *
-     *
-     */
+    @Nested
+    class createLibrarianTest {
+        /*
+         * TODO
+         *  createLibrarian:
+         *      checkUserFields(name, email, password)
+         *          connDB.getUserInformation(email) # Tested
+         *          verifyEmailValidity(email)
+         *          verifyPasswordSecurity(password)
+         *      connDB.insertLibrarian(name, email, password)
+         *
+         *
+         */
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
 
-    @ParameterizedTest
-    @MethodSource
-    void verifyLogin(String email, String password) throws SQLException {
-        // assertNotNull(new DiLi().authenticate(email, password));
-        // assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
-        assertNull(new ConnDB().verifyLogin(email, password));
-    }
-    public static Stream<Arguments> verifyLogin() {
-        return Stream.of(
-                arguments("a1234567@isec.pt", "!Qq123456789")
-                //,arguments("a21280686@isec.pt", "pedro")
-        );
+        }
+        @ParameterizedTest
+        @MethodSource
+        void verifyEmailValiditySuccess(String email) throws SQLException {
+            //assertNotNull(new DiLi().authenticate(email, password));
+            assertTrue(new DiLi().verifyEmailValidityTest(email));
+        }
+
+        public static Stream<Arguments> verifyEmailValiditySuccess() {
+            return Stream.of(
+                    arguments("a1234567@isec.pt"),
+                    arguments("a1234567@abc.pt")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void verifyEmailValidityFail(String email) throws SQLException {
+            assertFalse(new DiLi().verifyEmailValidityTest(email));
+        }
+
+        public static Stream<Arguments> verifyEmailValidityFail() {
+            return Stream.of(
+                    arguments(""),
+                    arguments("@isec.pt"),
+                    arguments("a123456722@.pt"),
+                    arguments("a123456722@isec."),
+                    arguments("@.pt"),
+                    arguments("a123456722@."),
+                    arguments("@isec."),
+                    arguments("@."),
+                    arguments("a123456722"),
+                    arguments("a123456722@"),
+                    arguments("a123456722@isec"),
+                    arguments("a123456722@isec.")
+            );
+        }
+        @ParameterizedTest
+        @MethodSource
+        void verifyPasswordSecuritySuccess(String password) throws SQLException {
+            //assertNotNull(new DiLi().authenticate(email, password));
+            assertTrue(new DiLi().verifyPasswordSecurityTest(password));
+        }
+
+        public static Stream<Arguments> verifyPasswordSecuritySuccess() {
+            return Stream.of(
+                    arguments("!Qq123456789"),
+                    arguments("!!31fefQf4#12")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void verifyPasswordSecurityFail(String password) throws SQLException {
+            assertFalse(new DiLi().verifyPasswordSecurityTest(password));
+        }
+
+        public static Stream<Arguments> verifyPasswordSecurityFail() {
+            return Stream.of(
+                    arguments("abc"),
+                    arguments("abcdefgh"),
+                    arguments("AAAA"),
+                    arguments("AAAAAAAA"),
+                    arguments("aAaA"),
+                    arguments("aAaAaAaA"),
+                    arguments("1234"),
+                    arguments("12345678"),
+                    arguments("!!!!"),
+                    arguments("!!!!!!!!"),
+                    arguments("a1a2aAaA"),
+                    arguments("aA1aA2AaAa"),
+                    arguments("aA1!")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void checkUserFieldsSuccess(String name, String email, String password) throws SQLException {
+            //assertNotNull(new DiLi().authenticate(email, password));
+            Message message = new DiLi().checkUserFieldsTest(name, email, password, false);
+            assertNotNull(message);
+            assertEquals(MessageType.SUCCESS, message.type);
+        }
+
+        public static Stream<Arguments> checkUserFieldsSuccess() {
+            return Stream.of(
+                    arguments("Marco", "a123456722@isec.pt", "!Qq123456789")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void checkUserFieldsFail(String name, String email, String password) throws SQLException {
+            Message message = new DiLi().checkUserFieldsTest(name, email, password, false);
+            assertNotNull(message);
+            assertEquals(MessageType.ERROR, message.type);
+        }
+
+        public static Stream<Arguments> checkUserFieldsFail() {
+            return Stream.of(
+                    arguments("", "a123456722@isec.pt", "!Qq123456789"),
+                    arguments("Marco", "", "!Qq123456789"),
+                    arguments("Marco", "a123456722@isec.pt", ""),
+
+                    arguments("Lorem ipsum dolor sit amet, consectetur vestibulum.", "a123456722@isec.pt", "!Qq123456789"),
+                    arguments("Marco", "Loremipsumdolorsitametconsecteturvestibulum@isec.pt", "!Qq123456789"),
+                    arguments("Marco", "a123456722@isec.pt", "!Loremipsumdolorsitametconsecteturvestibulum1234568"),
+
+                    arguments("Marco", "a1234567@isec.pt", "!Qq12345678"),
+
+                    arguments("Marco", "a123456722@", "!Qq12345678"),
+
+                    arguments("Marco", "a123456722@isec.pt", "!!!!!!!!")
+            );
+        }
+
+        @Nested
+        class createLibrarian {
+            @BeforeAll
+            static void beforeAll() throws SQLException {
+                clearDB();
+            }
+            @BeforeEach
+            public void beforeEach() throws SQLException {
+
+                dbSeeder();
+
+            }
+            @AfterEach
+            public void afterEach() throws SQLException {
+                clearDB();
+            }
+            @ParameterizedTest
+            @MethodSource
+            void insertLibrarianSuccess(String name, String email, String password) throws SQLException {
+                new ConnDB().insertLibrarian(email, name, password);
+                assertNotNull(new ConnDB().getUserInformation(email));
+            }
+
+            public static Stream<Arguments> insertLibrarianSuccess() {
+                return Stream.of(
+                        arguments("Marco", "newTestEmail@isec.pt", "!Qq123456789")
+                );
+            }
+
+            @ParameterizedTest
+            @MethodSource
+            void createLibrarianSuccess(String name, String email, String password) throws SQLException {
+                Message message = new DiLi().createLibrarian(name, email, password);
+                assertNotNull(message);
+                assertEquals(MessageType.SUCCESS, message.type);
+            }
+
+            public static Stream<Arguments> createLibrarianSuccess() {
+                return Stream.of(
+                        arguments("Marco", "newTestEmail@isec.pt", "!Qq123456789")
+                );
+            }
+
+            @ParameterizedTest
+            @MethodSource
+            void createLibrarianFail(String name, String email, String password) throws SQLException {
+                Message message = new DiLi().createLibrarian(name, email, password);
+                assertNotNull(message);
+                assertEquals(MessageType.ERROR, message.type);
+            }
+
+            public static Stream<Arguments> createLibrarianFail() {
+                return Stream.of(
+                        arguments("Marco", "a1234567@isec.pt", "!Qq123456789")
+                );
+            }
+        }
+
     }
 
+
+
+    @Nested
+    class updateLibrarianTest {
+        /*
+         * TODO
+         *  updateLibrarianInfo:
+         *      checkUserFields(name, email, password) # Tested
+         *      connDB.updateLibrarian(loggedAccount.getId(), name, email, password)
+         *
+         *
+         */
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+        }
+        @ParameterizedTest
+        @MethodSource
+        void updateLibrarianSuccess(int id, String name, String email, String password) throws SQLException {
+            int rowsAffected = new ConnDB().updateLibrarian(id, name, email, password);
+            assertEquals(1, rowsAffected);
+        }
+
+        public static Stream<Arguments> updateLibrarianSuccess() {
+            return Stream.of(
+                    arguments(1, "Marco1", "a1234561@isec.pt", "!Qq1234567891")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void updateLibrarianFail(int id, String name, String email, String password) throws SQLException {
+            int rowsAffected = new ConnDB().updateLibrarian(id, name, email, password);
+            assertEquals(0, rowsAffected);
+        }
+
+        public static Stream<Arguments> updateLibrarianFail() {
+            return Stream.of(
+                    arguments(-1, "Marco1", "a12345617@isec.pt", "!Qq1234567891")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void updateLibrarianInfoSuccess(int id, String name, String email, String password) throws SQLException {
+            Message message = new DiLi().updateLibrarianInfoTest(id, name, email, password);
+            assertNotNull(message);
+            assertEquals(MessageType.SUCCESS, message.type);
+        }
+
+        public static Stream<Arguments> updateLibrarianInfoSuccess() {
+            return Stream.of(
+                    arguments(1, "Marco1", "a1234567@isec.pt", "!Qq1234567891")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void updateLibrarianInfoFail(int id, String name, String email, String password) throws SQLException {
+            Message message = new DiLi().updateLibrarianInfoTest(id, name, email, password);
+            assertNotNull(message);
+            assertEquals(MessageType.ERROR, message.type);
+        }
+
+        public static Stream<Arguments> updateLibrarianInfoFail() {
+            return Stream.of(
+                    arguments(1, "Marco", "newTestEmail@isec.pt", "!Qq123456789")
+            );
+        }
+    }
     /*@ParameterizedTest
     @MethodSource
     void authenticateTrue(String email, String password) throws SQLException {
