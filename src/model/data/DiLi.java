@@ -65,8 +65,6 @@ public class DiLi {
         // if not null > user exists >>>> false
         // canEmailExist = false
         // If user exists, errors
-        System.out.println(connDB.getUserInformation(email));
-        System.out.println(canEmailExist);
         if((connDB.getUserInformation(email) == null ) == canEmailExist)
             return new Message("email", MessageType.ERROR, "Email is already used.");
 
@@ -137,7 +135,11 @@ public class DiLi {
         connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
-
+    public Message checkBookFieldsTest(String title, String author, String synopsis,
+                                    String language, List<String> genres,
+                                    double costPerDownload) {
+        return checkBookFields(title, author, synopsis, language, genres, costPerDownload);
+    }
     private Message checkBookFields(String title, String author, String synopsis,
                                     String language, List<String> genres,
                                     double costPerDownload) {

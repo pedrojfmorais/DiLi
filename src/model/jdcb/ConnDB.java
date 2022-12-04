@@ -406,7 +406,6 @@ public class ConnDB {
     public void downloadBook(int bookId, String email) throws SQLException {
         Statement statement = dbConn.createStatement();
         String sqlQuery = "INSERT INTO book_download VALUES ('" + bookId + "', '" + email + "')";
-        System.out.println(1);
         statement.executeUpdate(sqlQuery);
         statement.close();
     }

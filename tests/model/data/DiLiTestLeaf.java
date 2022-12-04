@@ -8,10 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -444,6 +441,102 @@ class DiLiTestLeaf {
         public static Stream<Arguments> updateLibrarianInfoFail() {
             return Stream.of(
                     arguments(1, "Marco", "newTestEmail@isec.pt", "!Qq123456789")
+            );
+        }
+    }
+
+    @Nested
+    class addBookTest {
+        /*
+         * TODO
+         *  addBook:
+         *      checkBookFields(title, author, synopsis, language, genres, costPerDownload)
+         *      connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath)
+         *
+         *
+         */
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+        }
+
+
+        @ParameterizedTest
+        @MethodSource
+        void checkBookFieldsSuccess(String title, String author, String synopsis,
+                                    String language, List<String> genres,
+                                    double costPerDownload) throws SQLException {
+            //assertNotNull(new DiLi().authenticate(email, password));
+            Message message = new DiLi().checkBookFieldsTest(title, author, synopsis, language, genres, costPerDownload);
+            assertNotNull(message);
+            assertEquals(MessageType.SUCCESS, message.type);
+        }
+
+        public static Stream<Arguments> checkBookFieldsSuccess() {
+            return Stream.of(
+                    arguments("Book 10", "Marco", "Book about a subject", "Portuguese", List.of("Genre1"), 0.003)
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void checkBookFieldsFail(String title, String author, String synopsis,
+                                    String language, List<String> genres,
+                                    double costPerDownload) throws SQLException {
+            Message message = new DiLi().checkBookFieldsTest(title, author, synopsis, language, genres, costPerDownload);
+            assertNotNull(message);
+            assertEquals(MessageType.ERROR, message.type);
+        }
+
+        public static Stream<Arguments> checkBookFieldsFail() {
+            return Stream.of(
+                    // arguments("abc", "abc", "abc", "Portuguese", List.of("abc"), 0.001),
+                    arguments("", "", "", "", List.of(), 0.001),
+                    arguments("", "", "", "", null, 0.001),
+                    arguments("Title", "", "", "", null, 0.001),
+                    arguments("", "Author", "", "", null, 0.001),
+                    arguments("", "", "Synopsis", "", null, 0.001),
+                    arguments("", "", "", "Portuguese", null, 0.001),
+                    arguments("", "", "", "", List.of("Genre1"), 0.001),
+
+                    arguments("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", "", "", "", null, 0.001),
+                    arguments("", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", "", "", null, 0.001),
+                    arguments("", "", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.".repeat(7), "", null, 0.001),
+                    arguments("", "", "", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", null, 0.001),
+                    arguments("", "", "", "", List.of("abcdefghijkl".repeat(10)), 0.001),
+                    arguments("", "", "", "", null, -0.001),
+
+
+                    arguments("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", "author", "sin", "Portuguese", List.of("teste"), 0.001),
+                    arguments("title", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", "sin", "Portuguese", List.of("teste"), 0.001),
+                    arguments("title", "author", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.".repeat(7), "Portuguese", List.of("teste"), 0.001),
+                    arguments("title", "author", "sin", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", List.of("teste"), 0.001),
+                    arguments("title", "author", "sin", "Portuguese", List.of("abcdefghijkl".repeat(10)), 0.001),
+                    arguments("title", "author", "sin", "Portuguese", List.of("teste"), -0.001)
+
+                    /*arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("", "", "", "", "", 0.001),
+                    arguments("Marco", "", "!Qq123456789"),
+                    arguments("Marco", "a123456722@isec.pt", ""),
+
+                    arguments("Lorem ipsum dolor sit amet, consectetur vestibulum.", "a123456722@isec.pt", "!Qq123456789"),
+                    arguments("Marco", "Loremipsumdolorsitametconsecteturvestibulum@isec.pt", "!Qq123456789"),
+                    arguments("Marco", "a123456722@isec.pt", "!Loremipsumdolorsitametconsecteturvestibulum1234568"),
+
+                    arguments("Marco", "a1234567@isec.pt", "!Qq12345678"),
+
+                    arguments("Marco", "a123456722@", "!Qq12345678"),
+
+                    arguments("Marco", "a123456722@isec.pt", "!!!!!!!!")*/
             );
         }
     }
