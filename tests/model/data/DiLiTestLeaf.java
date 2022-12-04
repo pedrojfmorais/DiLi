@@ -16,18 +16,28 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class DiLiTestLeaf {
 
+    static ConnDB conn;
+
+    static {
+        try {
+            conn = new ConnDB();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public boolean wasSuccessful(Message msg) {
         return msg.getType() == MessageType.SUCCESS;
     }
 
     private static void clearDB() throws SQLException {
-        new ConnDB().clearDB("test", true, true, true, true, true, true);
-        new ConnDB().clearLibrarians("test");
-        new ConnDB().clearUsers("test");
+        conn.clearDB("test", true, true, true, true, true, true);
+        conn.clearLibrarians("test");
+        conn.clearUsers("test");
     }
     private static void dbSeeder() throws SQLException {
 
-        ConnDB conn = new ConnDB();
 
         conn.insertLibrarianTest("a123456@isec.pt", "Marco", "!Qq123456789", 1);
         conn.insertLibrarian("a1234567@isec.pt", "Marco", "!Qq123456789");
@@ -71,6 +81,11 @@ class DiLiTestLeaf {
     public void afterEach() throws SQLException {
         clearDB();
     }*/
+    @AfterAll
+    static void afterAll() throws SQLException {
+        clearDB();
+        dbSeeder();
+    }
 
 
     @Nested
@@ -94,7 +109,7 @@ class DiLiTestLeaf {
         void verifyLoginSuccess(String email, String password) throws SQLException {
             // assertNotNull(new DiLi().authenticate(email, password));
             // assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
-            assertTrue(new ConnDB().verifyLogin(email, password));
+            assertTrue(conn.verifyLogin(email, password));
         }
 
         public static Stream<Arguments> verifyLoginSuccess() {
@@ -109,7 +124,7 @@ class DiLiTestLeaf {
         void verifyLoginFail(String email, String password) throws SQLException {
             // assertNotNull(new DiLi().authenticate(email, password));
             // assertTrue(wasSuccessful(new DiLi().authenticate(email, password)));
-            assertFalse(new ConnDB().verifyLogin(email, password));
+            assertFalse(conn.verifyLogin(email, password));
         }
 
         public static Stream<Arguments> verifyLoginFail() {
@@ -125,7 +140,7 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void getUserInformationSuccess(String email) throws SQLException {
-            assertNotNull(new ConnDB().getUserInformation(email));
+            assertNotNull(conn.getUserInformation(email));
         }
 
         public static Stream<Arguments> getUserInformationSuccess() {
@@ -137,7 +152,7 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void getUserInformationFail(String email) throws SQLException {
-            assertNull(new ConnDB().getUserInformation(email));
+            assertNull(conn.getUserInformation(email));
         }
 
         public static Stream<Arguments> getUserInformationFail() {
@@ -331,8 +346,8 @@ class DiLiTestLeaf {
             @ParameterizedTest
             @MethodSource
             void insertLibrarianSuccess(String name, String email, String password) throws SQLException {
-                new ConnDB().insertLibrarian(email, name, password);
-                assertNotNull(new ConnDB().getUserInformation(email));
+                conn.insertLibrarian(email, name, password);
+                assertNotNull(conn.getUserInformation(email));
             }
 
             public static Stream<Arguments> insertLibrarianSuccess() {
@@ -393,7 +408,7 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void updateLibrarianSuccess(int id, String name, String email, String password) throws SQLException {
-            int rowsAffected = new ConnDB().updateLibrarian(id, name, email, password);
+            int rowsAffected = conn.updateLibrarian(id, name, email, password);
             assertEquals(1, rowsAffected);
         }
 
@@ -406,7 +421,7 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void updateLibrarianFail(int id, String name, String email, String password) throws SQLException {
-            int rowsAffected = new ConnDB().updateLibrarian(id, name, email, password);
+            int rowsAffected = conn.updateLibrarian(id, name, email, password);
             assertEquals(0, rowsAffected);
         }
 
@@ -492,7 +507,6 @@ class DiLiTestLeaf {
 
         public static Stream<Arguments> checkBookFieldsFail() {
             return Stream.of(
-                    // arguments("abc", "abc", "abc", "Portuguese", List.of("abc"), 0.001),
                     arguments("", "", "", "", List.of(), 0.001),
                     arguments("", "", "", "", null, 0.001),
                     arguments("Title", "", "", "", null, 0.001),
@@ -515,31 +529,164 @@ class DiLiTestLeaf {
                     arguments("title", "author", "sin", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porta hendrerit pharetra. Maecenas dui.", List.of("teste"), 0.001),
                     arguments("title", "author", "sin", "Portuguese", List.of("abcdefghijkl".repeat(10)), 0.001),
                     arguments("title", "author", "sin", "Portuguese", List.of("teste"), -0.001)
+            );
+        }
 
-                    /*arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("", "", "", "", "", 0.001),
-                    arguments("Marco", "", "!Qq123456789"),
-                    arguments("Marco", "a123456722@isec.pt", ""),
+        @ParameterizedTest
+        @MethodSource
+        void insertBookSuccess(String title, String author, String synopsis, String language,
+                               List<String> genres, boolean availability, double costPerDownload,
+                               Map<String, String> downloadLink, String imagePath) throws SQLException {
+            conn.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            Book book = conn.search(title).get(0);
+            assertNotNull(book);
+            assertEquals(1, book.getGenres().size());
+            assertEquals(1, book.getDownloadFiles().size());
+        }
 
-                    arguments("Lorem ipsum dolor sit amet, consectetur vestibulum.", "a123456722@isec.pt", "!Qq123456789"),
-                    arguments("Marco", "Loremipsumdolorsitametconsecteturvestibulum@isec.pt", "!Qq123456789"),
-                    arguments("Marco", "a123456722@isec.pt", "!Loremipsumdolorsitametconsecteturvestibulum1234568"),
+        public static Stream<Arguments> insertBookSuccess() {
+            Map<String, String> map = new HashMap<>();
+            map.put("pdf", "urlLink");
+            return Stream.of(
+                    arguments("Book 10", "Marco", "Book about a subject", "Portuguese", List.of("Genre1"), true, 0.003, map, "")
+            );
+        }
 
-                    arguments("Marco", "a1234567@isec.pt", "!Qq12345678"),
+        @ParameterizedTest
+        @MethodSource
+        void addBookSuccess(String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           Map<String, String> downloadLink, String imagePath) throws SQLException {
+            Message message = new DiLi().addBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            assertNotNull(message);
+            assertEquals(MessageType.SUCCESS, message.type);
+        }
 
-                    arguments("Marco", "a123456722@", "!Qq12345678"),
+        public static Stream<Arguments> addBookSuccess() {
+            Map<String, String> map = new HashMap<>();
+            map.put("pdf", "urlLink");
+            return Stream.of(
+                    arguments("Book 10", "Marco", "Book about a subject", "Portuguese", List.of("Genre1"), true, 0.003, map, "")
+            );
+        }
 
-                    arguments("Marco", "a123456722@isec.pt", "!!!!!!!!")*/
+        @ParameterizedTest
+        @MethodSource
+        void addBookFail(String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           Map<String, String> downloadLink, String imagePath) throws SQLException {
+            Message message = new DiLi().addBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            assertNotNull(message);
+            assertEquals(MessageType.ERROR, message.type);
+        }
+
+        public static Stream<Arguments> addBookFail() {
+            Map<String, String> map = new HashMap<>();
+            map.put("pdf", "urlLink");
+            return Stream.of(
+                    arguments("Book 10".repeat(20), "Marco", "Book about a subject", "Portuguese", List.of("Genre1"), true, 0.003, map, "")
             );
         }
     }
+
+    @Nested
+    class searchTest {
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+            Map<String, String> downloadLink = new HashMap<String, String>();
+            downloadLink.put("epub", "https://qgwlmcg2lz.pdcdn1.top/dl2.php?id=6754130&h=f64cc79da1c4d117f2175f678f985241&u=cache&ext=pdf&n=College%20physics%20-%20physics%20and%20astronomy");
+            conn.insertBook("Livro 42", "Marco", "Sinopse", "Portuguese",
+                    Arrays.asList("Fisica", "Eletrónica"), true, 0.005, downloadLink, "");
+
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void searchSuccess(String search, int howMany) throws SQLException {
+            ArrayList<Book> books = conn.search(search);
+            assertNotNull(books);
+            assertEquals(howMany, books.size());
+        }
+
+        public static Stream<Arguments> searchSuccess() {
+            return Stream.of(
+                    arguments("Book", 4),
+                    arguments("Livro", 1),
+                    arguments("John", 2),
+                    arguments("Doe", 4),
+                    arguments("o", 5),
+                    arguments("ook", 4),
+                    arguments("rco", 1)
+            );
+        }
+    }
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    class downloadTest {
+
+        /*
+         * TODO
+         *  downloadBook:
+         *      connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())
+         *      connDB.downloadBook(book.getId(), loggedAccount.getEmail())
+         *
+         *
+         */
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+        }
+
+
+        @ParameterizedTest
+        @MethodSource
+        @Order(1)
+        void canDownloadBookSuccess(int bookId, String email, String title, String author, String synopsis,
+                                 boolean availability, double costPerDownload, String imagePath) throws SQLException {
+            conn.insertBookTest(bookId, title, author, synopsis, availability, costPerDownload, imagePath);
+            assertTrue(conn.canDownloadBook(bookId, email));
+        }
+
+        public static Stream<Arguments> canDownloadBookSuccess() {
+            return Stream.of(
+                    arguments(1, "marco@isec.pt", "Book 10", "Marco", "Book about a subject", true, 0.001, "")
+            );
+        }
+        @ParameterizedTest
+        @MethodSource
+        @Order(2)
+        void downloadBookSuccess(int bookId, String email) throws SQLException {
+            assertEquals(1, conn.downloadBook(bookId, email));
+        }
+
+        public static Stream<Arguments> downloadBookSuccess() {
+            return Stream.of(
+                    arguments(1, "marco@isec.pt")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        @Order(3)
+        void canDownloadBookFail(int bookId, String email) throws SQLException {
+            assertFalse(conn.canDownloadBook(bookId, email));
+        }
+
+        public static Stream<Arguments> canDownloadBookFail() {
+            return Stream.of(
+                    arguments(1, "marco@isec.pt")
+            );
+        }
+
+
+
+    }
+
     /*@ParameterizedTest
     @MethodSource
     void authenticateTrue(String email, String password) throws SQLException {

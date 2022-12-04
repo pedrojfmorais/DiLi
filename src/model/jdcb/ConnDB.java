@@ -152,11 +152,22 @@ public class ConnDB {
         statement.close();
         return rowsAffected;
     }
+    public void insertBookTest(int id, String title, String author, String synopsis,
+                               boolean availability, double costPerDownload, String imagePath) throws SQLException {
+
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "INSERT INTO book (id, title, synopsis, author, availability, costPerDownload, image_path ) VALUES (" +
+                "'" + id + "','" + title + "','" + synopsis + "','" + author + "','"
+                + availability + "','" + costPerDownload + "','" + imagePath + "')";
+
+        statement.executeUpdate(sqlQuery);
+        statement.close();
+    }
 
     public void insertBook(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
                            Map<String, String> downloadLink, String imagePath) throws SQLException{
-        // TODO
 
         Statement statement = dbConn.createStatement();
 
@@ -403,11 +414,12 @@ public class ConnDB {
         return ret == 0;
 
     }
-    public void downloadBook(int bookId, String email) throws SQLException {
+    public int downloadBook(int bookId, String email) throws SQLException {
         Statement statement = dbConn.createStatement();
         String sqlQuery = "INSERT INTO book_download VALUES ('" + bookId + "', '" + email + "')";
-        statement.executeUpdate(sqlQuery);
+        int rowsAffected = statement.executeUpdate(sqlQuery);
         statement.close();
+        return rowsAffected;
     }
     public ArrayList<Book> search(String search) throws SQLException {
         ArrayList<Book> bookArrayList = new ArrayList<>();
