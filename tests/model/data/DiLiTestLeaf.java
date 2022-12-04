@@ -84,7 +84,6 @@ class DiLiTestLeaf {
     @AfterAll
     static void afterAll() throws SQLException {
         clearDB();
-        dbSeeder();
     }
 
 
