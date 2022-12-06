@@ -1,6 +1,7 @@
 package model.data;
 
 import model.data.book.Book;
+import model.data.book.Review;
 import model.data.user.User;
 import model.jdcb.ConnDB;
 
@@ -196,13 +197,11 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
-    public ArrayList<Book> search(String search) throws SQLException
-    {
+    public ArrayList<Book> search(String search) throws SQLException {
         return connDB.search(search);
     }
 
-    public Message downloadBook(Book book) throws SQLException
-    {
+    public Message downloadBook(Book book) throws SQLException {
         if(connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
             //TODO Download
             connDB.downloadBook(book.getId(), loggedAccount.getEmail());
@@ -210,13 +209,20 @@ public class DiLi {
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
     }
-    public Message downloadBookTest(Book book, String email) throws SQLException
-    {
+    public Message downloadBookTest(Book book, String email) throws SQLException {
         if(connDB.canDownloadBook(book.getId(), email)) {
             //TODO Download
             connDB.downloadBook(book.getId(), email);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
+    }
+
+    public Message addReview(Book book, int rating, String review) throws SQLException {
+        if(rating < 1 || rating > 5)
+            return new Message("rating", MessageType.ERROR, "Invalid rating");
+        connDB.addReview(loggedAccount, book, rating, review);
+        book.addReview(new Review(loggedAccount.getEmail(), rating, review));
+        return new Message(null, MessageType.SUCCESS, "Review added successfully");
     }
 }

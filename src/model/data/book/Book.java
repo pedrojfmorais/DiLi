@@ -15,8 +15,10 @@ public class Book {
     private double costPerDownload;
     private Map<String, String> downloadFiles;
     private String imagePath;
+    private List<Review> reviews;
 
-    public Book(int id, String title, String author, String synopsis, String language, List<String> genres, boolean availability, double costPerDownload, Map<String, String> downloadFiles, String imagePath) {
+    public Book(int id, String title, String author, String synopsis, String language, List<String> genres, boolean availability, double costPerDownload, Map<String, String> downloadFiles, String imagePath)
+    {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -103,6 +105,14 @@ public class Book {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
     }
 
     @Override

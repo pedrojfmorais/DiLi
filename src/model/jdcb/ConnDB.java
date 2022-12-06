@@ -400,7 +400,6 @@ public class ConnDB {
         statement.close();
         resultSet.close();
         return ret;
-
     }
 
     public boolean canDownloadBook(int bookId, String email) throws SQLException {
@@ -481,4 +480,10 @@ public class ConnDB {
         return book;
     }
 
+    public void addReview(User user, Book book, int rating, String review) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "INSERT INTO rating_review VALUES ('" + user.getId() + "', '" + book.getId() + "', + '" + rating + "' + '" + review + "')";
+        int result = statement.executeUpdate(sqlQuery);
+        statement.close();
+    }
 }
