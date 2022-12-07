@@ -6,8 +6,10 @@ import model.data.user.User;
 import model.jdcb.ConnDB;
 
 import java.sql.Array;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -201,28 +203,127 @@ public class DiLi {
         return connDB.search(search);
     }
 
-    public Message downloadBook(Book book) throws SQLException {
+    public Message downloadBook(Book book, String format) throws SQLException {
         if(connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
             //TODO Download
-            connDB.downloadBook(book.getId(), loggedAccount.getEmail());
+            connDB.downloadBook(book.getId(), loggedAccount.getEmail(), format);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
     }
-    public Message downloadBookTest(Book book, String email) throws SQLException {
+    public Message downloadBookTest(Book book, String email, String format) throws SQLException {
         if(connDB.canDownloadBook(book.getId(), email)) {
             //TODO Download
-            connDB.downloadBook(book.getId(), email);
+            connDB.downloadBook(book.getId(), email, format);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
     }
 
+    /*
+     * List by Filters
+     */
+    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
+        if(filtersGenre != null && filtersLanguage != null && filtersFormat != null)
+            return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat);
+        return new ArrayList<>();
+
+
+    }
+    /*
+     * End List by Filters
+     */
+    /*
+     * Copyright costs and statistics
+     */
+
+    public double copyrightAllBooks() throws SQLException {
+
+        ArrayList<Book> books = connDB.listAllBooks();
+
+        double total = 0;
+        for(Book book : books) {
+            total += connDB.getBookDownloadCounter(book.getId()) * book.getCostPerDownload();
+        }
+
+        return total;
+
+    }
+    public double copyrightBook(Book book) throws SQLException {
+
+        if(book == null)
+            return 0;
+
+        int copies = connDB.getBookDownloadCounter(book.getId());
+
+        return copies * book.getCostPerDownload();
+
+    }
+    public HashMap<String, Integer> statisticsBookDownloads() throws SQLException {
+
+        HashMap<String, Integer> result = new HashMap<>();
+
+        List<Book> books = connDB.listAllBooks();
+
+        for (Book book : books) {
+
+            int total = connDB.getBookDownloadCounter(book.getId());
+            result.put(book.getTitle(), total);
+
+        }
+        return result;
+    }
+
+    public HashMap<String, Integer> statisticsFormatDownloads() throws SQLException {
+
+
+        HashMap<String, Integer> result = new HashMap<>();
+
+        ResultSet resultSet = connDB.getStatisticFormatDownloads();
+
+        while(resultSet.next()) {
+
+            result.put(resultSet.getString(1), resultSet.getInt(2));
+
+        }
+
+        resultSet.close();
+        System.out.println(result);
+        return result;
+
+    }
+
+    /*
+     * End Copyright costs and statistics
+     */
+
+
+
     public Message addReview(Book book, int rating, String review) throws SQLException {
-        if(rating < 1 || rating > 5)
-            return new Message("rating", MessageType.ERROR, "Invalid rating");
-        connDB.addReview(loggedAccount, book, rating, review);
-        book.addReview(new Review(loggedAccount.getEmail(), rating, review));
-        return new Message(null, MessageType.SUCCESS, "Review added successfully");
+        if(book == null)
+            return new Message(null, MessageType.ERROR, "Book is null.");
+        if(loggedAccount == null)
+            return new Message(null, MessageType.ERROR, "User is null");
+        if(!connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
+            if(rating < 1 || rating > 5)
+                return new Message("rating", MessageType.ERROR, "Invalid rating");
+            if(connDB.addReview(loggedAccount, book, rating, review) == 0)
+                return new Message(null, MessageType.ERROR, "Failed to add Review");
+            book.addReview(new Review(connDB.getReviewId(book.getId(), loggedAccount.getEmail()), loggedAccount.getEmail(), rating, review));
+            return new Message(null, MessageType.SUCCESS, "Review added successfully");
+        }
+        return new Message(null, MessageType.ERROR, "User must download the book before adding a rating/review.");
+    }
+
+    public Message deleteReview(Book book, Review review) throws SQLException {
+        if(book == null)
+            return new Message(null, MessageType.ERROR, "Book is null.");
+        if(review == null)
+            return new Message(null, MessageType.ERROR, "Review is null.");
+        if(connDB.deleteReview(review.getId()) == 0) {
+            return new Message(null, MessageType.ERROR, "Review doesn't exist");
+        }
+        book.removeReview(review.getId());
+        return new Message(null, MessageType.SUCCESS, "Review deleted successfully.");
     }
 }

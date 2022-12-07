@@ -12,10 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -179,30 +176,26 @@ class DiLiTest {
                         "")
         );
     }
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource
-    void listBooksByFiltersMultiple(String title, String author, String synopsis, String language,
-                            List<String> genres, boolean availability, double costPerDownload,
-                            Map<String, String> downloadLink, String imagePath) throws SQLException {
-        //assertNull(new DiLi().authenticate(email, password));
-        assertTrue(wasSuccessful(new DiLi().addBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath)));
+    void listBooksByFiltersMultiple(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, int howMany) throws SQLException {
+        ArrayList<Book> books = new DiLi().listByFilters(filtersGenre, filtersLanguage, filtersFormat);
+        assertNotNull(books);
+        assertEquals(howMany, books.size());
     }
-    public static Stream<Arguments> listBooksByFiltersMultiple() {
 
-        Map<String, String> downloadLink = new HashMap<>();
-        downloadLink.put("pdf", "https://2zappmzhw3.pdcdn1.top/dl2.php?id=178205861&h=351217e7aed2625b1e321796d7cd8d0f&u=cache&ext=pdf&n=Kotlin%20for%20android%20developers%20learn%20kotlin%20the%20easy%20way%20while%20developing%20an%20android%20app");
+    public static Stream<Arguments> listBooksByFiltersMultiple() {
         return Stream.of(
-                arguments("Book Success",
-                        "John Doe",
-                        "Kotlin for beginners",
-                        "English",
-                        List.of("Kotlin"),
-                        true,
-                        0.005,
-                        downloadLink,
-                        "")
+                arguments(List.of("Eletrónica"), List.of(""), List.of(""), 2),
+                arguments(List.of("Eletrónica"), List.of("Portuguese"), List.of(""), 1),
+                arguments(List.of("Eletrónica"), List.of("Portuguese"), List.of("epub"), 1),
+                arguments(List.of("Eletrónica"), List.of(""), List.of("epub"), 1),
+                arguments(List.of(""), List.of(""), List.of("epub"), 2),
+                // arguments(List.of(""), List.of(""), List.of("epub", "pdf"), 1),
+                arguments(List.of(""), List.of("French"), List.of("epub", "pdf"), 0),
+                arguments(List.of(""), List.of(""), List.of(""), 4)
         );
-    }*/
+    }
 
     // @ParameterizedTest
     //@MethodSource
@@ -228,5 +221,4 @@ class DiLiTest {
                 arguments()
         );
     }*/
-
 }

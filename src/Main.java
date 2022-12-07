@@ -1,16 +1,37 @@
 import model.data.DiLi;
 import model.jdcb.ConnDB;
 
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws SQLException {
-        ConnDB conn = new ConnDB();
+        /*ArrayList<String> filters = new ArrayList<>();
+        filters.add("Eletrónica");
+        filters.add("Programming");
+        StringBuilder sqlQuery = new StringBuilder("SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE " +
+                "book.id = book_genre.book_id AND " +
+                "genre.id = book_genre.genre_id AND " +
+                "(");/*genre.name LIKE 'Eletrónica' OR " +
+                "genre.name LIKE 'Programming')");*/
 
+        /*int i = 0;
+        for(String filter : filters) {
+            sqlQuery.append("genre.name LIKE '").append(filter).append("'");
+            if(i++ != filters.size()-1)
+                sqlQuery.append(" OR ");
+        }
+        sqlQuery.append(")");
+        System.out.println(sqlQuery.toString());*/
+        /*ConnDB conn = new ConnDB();
+
+        conn.insertLibrarianTest("a123456@isec.pt", "Marco", "!Qq123456789", 1);
         conn.insertLibrarian("a1234567@isec.pt", "Marco", "!Qq123456789");
         conn.insertLibrarian("a21280055321@isec.pt", "António", "!Qq123456789");
+
+
 
         Map<String, String> downloadLink = new HashMap<String, String>();
         downloadLink.put("epub", "https://qgwlmcg2lz.pdcdn1.top/dl2.php?id=6754130&h=f64cc79da1c4d117f2175f678f985241&u=cache&ext=pdf&n=College%20physics%20-%20physics%20and%20astronomy");
@@ -31,7 +52,7 @@ public class Main {
         downloadLink.put("pdf", "https://2zappmzhw3.pdcdn1.top/dl2.php?id=178205861&h=351217e7aed2625b1e321796d7cd8d0f&u=cache&ext=pdf&n=Kotlin%20for%20android%20developers%20learn%20kotlin%20the%20easy%20way%20while%20developing%20an%20android%20app");
         downloadLink.put("epub", "https://2zappmzhw3.pdcdn1.top/dl2.php?id=178205861&h=351217e7aed2625b1e321796d7cd8d0f&u=cache&ext=pdf&n=Kotlin%20for%20android%20developers%20learn%20kotlin%20the%20easy%20way%20while%20developing%20an%20android%20app");
         conn.insertBook("Book 2", "Jane Doe", "Learn to program Kotlin ", "English",
-                List.of("Programming", "Java", "Kotlin"), true, 0.105, downloadLink, "");
+                List.of("Programming", "Java", "Kotlin"), true, 0.105, downloadLink, "");*/
         //System.out.println(new DiLi().authenticate("a1234567@isec.pt", "!Qq123456789"));
 
         /*

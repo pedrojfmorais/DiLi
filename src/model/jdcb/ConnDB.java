@@ -1,6 +1,7 @@
 package model.jdcb;
 
 import model.data.book.Book;
+import model.data.book.Review;
 import model.data.user.User;
 import model.data.user.UserType;
 
@@ -413,39 +414,165 @@ public class ConnDB {
         return ret == 0;
 
     }
-    public int downloadBook(int bookId, String email) throws SQLException {
+    public int downloadBook(int bookId, String email, String format) throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "INSERT INTO book_download VALUES ('" + bookId + "', '" + email + "')";
+        String sqlQuery = "INSERT INTO book_download VALUES ('" + bookId + "', '" + email + "', '" + format + "')";
         int rowsAffected = statement.executeUpdate(sqlQuery);
         statement.close();
         return rowsAffected;
     }
-    public ArrayList<Book> search(String search) throws SQLException {
+    public ResultSet getStatisticFormatDownloads() throws SQLException {
+
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT format, COUNT(*) FROM test GROUP BY format";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        statement.close();
+        resultSet.close();
+        return resultSet;
+    }
+
+    private Book prepareBook(ResultSet resultSet) throws SQLException {
+
+        int bookId = resultSet.getInt("id");
+        return new Book(bookId,
+                resultSet.getString("title"),
+                resultSet.getString("author"),
+                resultSet.getString("synopsis"),
+                getBookLanguage(bookId),
+                getBookGenres(bookId),
+                resultSet.getBoolean("availability"),
+                resultSet.getDouble("costPerDownload"),
+                getBookDownloadFile(bookId),
+                resultSet.getString("image_path"));
+
+    }
+
+    private ArrayList<Book> listBooks(ResultSet resultSet) throws SQLException {
         ArrayList<Book> bookArrayList = new ArrayList<>();
-        Book book = null;
+        while(resultSet.next()) {
+
+            bookArrayList.add(prepareBook(resultSet));
+        }
+
+        return bookArrayList;
+    }
+
+    private List<String> getAllFilterSpecific(String table) throws SQLException {
+
+        ArrayList<String> filterList = new ArrayList<>();
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT name FROM " + table;
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+
+        while(resultSet.next()) {
+
+            filterList.add(resultSet.getString(1));
+        }
+
+
+        resultSet.close();
+        statement.close();
+
+        return filterList;
+    }
+
+    private String prepareQueryList(List<String> filters, String nameField) throws SQLException {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(filters.size() == 1 && filters.get(0).equals("")) {
+            filters = getAllFilterSpecific(nameField.split("\\.")[0]);
+        }
+        if(!filters.isEmpty()) {
+            stringBuilder.append(" AND (");
+            int i = 0;
+            for (String filter : filters) {
+                stringBuilder.append(nameField + " LIKE '").append(filter).append("'");
+                if (i++ != filters.size() - 1)
+                    stringBuilder.append(" OR ");
+            }
+            stringBuilder.append(")");
+        }
+        return stringBuilder.toString();
+    }
+
+    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
+
+        /*
+        SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE
+            book.id = book_genre.book_id AND
+            genre.id = book_genre.genre_id AND
+            (genre.name LIKE 'Eletrónica' OR
+            genre.name LIKE 'Programming');
+         */
+
+        /*
+        SELECT DISTINCT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, language, book_language INNER JOIN genre, book_genre ON book.id = book_genre.book_id AND genre.id = book_genre.genre_id
+         AND (genre.name LIKE 'Eletrónica')
+          INNER JOIN format, book_file ON book.id = book_file.book_id AND format.id = book_file.format_id
+           AND (format.name LIKE 'pdf')
+            WHERE book.id = book_language.book_id AND language.id = book_language.language_id AND (language.name LIKE 'French');
+         */
+        Statement statement = dbConn.createStatement();
+        String genres = prepareQueryList(filtersGenre, "genre.name");
+        String languages = prepareQueryList(filtersLanguage, "language.name");
+        String formats = prepareQueryList(filtersFormat, "format.name");
+        String sqlQuery = "SELECT DISTINCT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, language, book_language " +
+                " INNER JOIN genre, book_genre ON book.id = book_genre.book_id AND genre.id = book_genre.genre_id " +
+                genres +
+                " INNER JOIN format, book_file ON book.id = book_file.book_id AND format.id = book_file.format_id " +
+                formats +
+                " WHERE book.id = book_language.book_id AND language.id = book_language.language_id " +
+                languages;
+
+        /*StringBuilder sqlQuery = new StringBuilder("SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE " +
+                "book.id = book_genre.book_id AND " +
+                "genre.id = book_genre.genre_id AND " +
+                "(");
+
+        int i = 0;
+        for(String filter : filters) {
+            sqlQuery.append("genre.name LIKE '").append(filter).append("'");
+            if(i++ != filters.size()-1)
+                sqlQuery.append(" OR ");
+        }
+        sqlQuery.append(")");*/
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        ArrayList<Book> bookArrayList = listBooks(resultSet);
+
+        resultSet.close();
+        statement.close();
+
+        return bookArrayList;
+    }
+    public ArrayList<Book> listAllBooks() throws SQLException {
+
+
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT * FROM book WHERE availability='true'";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        ArrayList<Book> bookArrayList = listBooks(resultSet);
+
+        resultSet.close();
+        statement.close();
+
+        return bookArrayList;
+    }
+    public ArrayList<Book> search(String search) throws SQLException {
+        if(search.isBlank())
+            return listAllBooks();
 
         Statement statement = dbConn.createStatement();
 
         String sqlQuery = "SELECT * FROM book " +
-                "WHERE title LIKE '%" + search + "%' " +
-                "OR author LIKE  '%" + search + "%'";
+                "WHERE (title LIKE '%" + search + "%' " +
+                "OR author LIKE  '%" + search + "%') AND availability='true'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
-
-        while(resultSet.next()) {
-            int bookId = resultSet.getInt("id");
-            book = new Book(bookId,
-                    resultSet.getString("title"),
-                    resultSet.getString("author"),
-                    resultSet.getString("synopsis"),
-                    getBookLanguage(bookId),
-                    getBookGenres(bookId),
-                    resultSet.getBoolean("availability"),
-                    resultSet.getDouble("costPerDownload"),
-                    getBookDownloadFile(bookId),
-                    resultSet.getString("image_path"));
-            bookArrayList.add(book);
-        }
+        ArrayList<Book> bookArrayList = listBooks(resultSet);
 
         resultSet.close();
         statement.close();
@@ -457,21 +584,12 @@ public class ConnDB {
         Book book = null;
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "SELECT * FROM book " + "WHERE id='" + id + "'";
+        String sqlQuery = "SELECT * FROM book " + "WHERE availability='true' AND id='" + id + "'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
-        while(resultSet.next()) {
-            book = new Book(id,
-                    resultSet.getString("title"),
-                    resultSet.getString("author"),
-                    resultSet.getString("synopsis"),
-                    getBookLanguage(id),
-                    getBookGenres(id),
-                    resultSet.getBoolean("availability"),
-                    resultSet.getDouble("costPerDownload"),
-                    getBookDownloadFile(id),
-                    resultSet.getString("image_path"));
+        if(resultSet.next()) {
+            book = prepareBook(resultSet);
         }
 
         resultSet.close();
@@ -480,10 +598,64 @@ public class ConnDB {
         return book;
     }
 
-    public void addReview(User user, Book book, int rating, String review) throws SQLException {
-        Statement statement = dbConn.createStatement();
-        String sqlQuery = "INSERT INTO rating_review VALUES ('" + user.getId() + "', '" + book.getId() + "', + '" + rating + "' + '" + review + "')";
-        int result = statement.executeUpdate(sqlQuery);
-        statement.close();
+    public int addReview(User user, Book book, int rating, String review) throws SQLException {
+        try(Statement statement = dbConn.createStatement()) {
+            String sqlQuery = "INSERT INTO rating_review VALUES ('" + user.getEmail() + "', '" + book.getId() + "', + '" + rating + "' + '" + review + "')";
+            statement.close();
+            return statement.executeUpdate(sqlQuery);
+        } catch (SQLException e) {
+            return 0;
+        }
     }
+
+    public int getReviewId(int bookId, String userEmail) throws SQLException {
+        int reviewId = 0;
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT * FROM rating_review " + "WHERE book_id='" + bookId + "' AND user_email='" + userEmail + "'";
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        if(resultSet.next()) {
+            reviewId = resultSet.getInt("id");
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return reviewId;
+    }
+
+    public int deleteReview(int id) throws SQLException {
+
+        try(Statement statement = dbConn.createStatement()) {
+            String sqlQuery = "UPDATE rating_review SET review='" + null + "WHERE id='" + id + "'";
+            statement.close();
+            return statement.executeUpdate(sqlQuery);
+        } catch (SQLException e) {
+            return 0;
+        }
+    }
+
+    public Review getReview(int id) throws SQLException {
+        Review review = null;
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT * FROM rating_review " + "WHERE id='" + id + "'";
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+        if(resultSet.next()) {
+            review = new Review(resultSet.getInt("id"),
+                    resultSet.getString("user_email"),
+                    resultSet.getInt("rating"),
+                    resultSet.getString("review"));
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return review;
+    }
+
 }

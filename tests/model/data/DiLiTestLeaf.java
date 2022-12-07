@@ -1,16 +1,20 @@
 package model.data;
 
 import model.data.book.Book;
+import model.data.book.Review;
+import model.data.user.User;
 import model.jdcb.ConnDB;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static java.lang.System.exit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -52,7 +56,7 @@ class DiLiTestLeaf {
 
         downloadLink = new HashMap<String, String>();
         downloadLink.put("pdf", "https://m5mdanpkq6.pdcdn1.top/dl2.php?id=200665543&h=545e66e7ff5a77ae8a9fd70f9fac0724&u=cache&ext=pdf&n=Portuguese%20learn%20portuguese%20in%2021%20days%20-%20a%20practical%20guide%20to%20make%20portuguese%20look%20easy%20even%20for%20beginners");
-        conn.insertBook("Book 2", "Jane Doe", "Sinopse do livro 2", "English",
+        conn.insertBook("Book 2", "Jane Doe", "Sinopse do livro 2", "French",
                 List.of("Eletrónica"), true, 0.002, downloadLink, "");
 
         downloadLink = new HashMap<String, String>();
@@ -65,6 +69,10 @@ class DiLiTestLeaf {
         downloadLink.put("epub", "https://2zappmzhw3.pdcdn1.top/dl2.php?id=178205861&h=351217e7aed2625b1e321796d7cd8d0f&u=cache&ext=pdf&n=Kotlin%20for%20android%20developers%20learn%20kotlin%20the%20easy%20way%20while%20developing%20an%20android%20app");
         conn.insertBook("Book 2", "Jane Doe", "Learn to program Kotlin ", "English",
                 List.of("Programming", "Java", "Kotlin"), true, 0.105, downloadLink, "");
+
+
+        /*conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 10").get(0), 4, "review");
+        conn.addReview(conn.getUserInformation("a123457@isec.pt"), conn.search("Book 10").get(0), 3, "review1");*/
     }
     /*@BeforeAll
     static void beforeAll() throws SQLException {
@@ -623,6 +631,43 @@ class DiLiTestLeaf {
         }
     }
     @Nested
+    class searchFilterTest {
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+
+            Map<String, String> downloadLink = new HashMap<String, String>();
+            downloadLink.put("epub", "https://qgwlmcg2lz.pdcdn1.top/dl2.php?id=6754130&h=f64cc79da1c4d117f2175f678f985241&u=cache&ext=pdf&n=College%20physics%20-%20physics%20and%20astronomy");
+            conn.insertBook("Livro 42", "Marco", "Sinopse", "Portuguese",
+                    Arrays.asList("Fisica", "Eletrónica"), true, 0.005, downloadLink, "");
+
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void filtersSuccess(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, int howMany) throws SQLException {
+            ArrayList<Book> books = new DiLi().listByFilters(filtersGenre, filtersLanguage, filtersFormat);
+            assertNotNull(books);
+            assertEquals(howMany, books.size());
+        }
+
+        public static Stream<Arguments> filtersSuccess() {
+            return Stream.of(
+                    arguments(List.of("java"), List.of("english"), List.of("pdf"), 1),
+                    arguments(List.of("java"), List.of("english"), List.of("pdf", "epub"), 1),
+                    arguments(List.of("eletrónica"), List.of("English"), List.of("pdf", "epub"), 0),
+                    arguments(List.of("eletrónica"), List.of("french"), List.of("pdf", "epub"), 1)
+                    /*arguments(new ArrayList<>(), 0),
+                    arguments(null, 0),
+                    arguments((ArrayList<String>)List.of("Eletrónica", "Programming", "Fisica"), 5),
+                    arguments((ArrayList<String>)List.of("Eletrónica", "Programming", "d"), 4),
+                    arguments((ArrayList<String>)List.of("d"), 0)*/
+            );
+        }
+
+    }
+    @Nested
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class downloadTest {
 
@@ -659,13 +704,13 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         @Order(2)
-        void downloadBookSuccess(int bookId, String email) throws SQLException {
-            assertEquals(1, conn.downloadBook(bookId, email));
+        void downloadBookSuccess(int bookId, String email, String format) throws SQLException {
+            assertEquals(1, conn.downloadBook(bookId, email, format));
         }
 
         public static Stream<Arguments> downloadBookSuccess() {
             return Stream.of(
-                    arguments(1, "marco@isec.pt")
+                    arguments(1, "marco@isec.pt", "pdf")
             );
         }
 
@@ -685,6 +730,86 @@ class DiLiTestLeaf {
 
 
     }
+
+
+
+
+    /*@Nested
+    class addReviewTest {
+
+        *
+         * TODO
+         *
+         *
+         *
+        @BeforeAll
+        static void beforeAll() throws SQLException {
+            clearDB();
+            dbSeeder();
+            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 4, "review");
+            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void addReviewTrue(Book book, int rating, String review) throws SQLException {
+            assertTrue(wasSuccessful(new DiLi().addReview(book, rating, review)));
+        }
+
+        public static Stream<Arguments> addReviewTrue() throws SQLException {
+            return Stream.of(
+                    arguments(conn.search("Book 1").get(0), 3, conn.getReview(1))
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void addReviewFail(Book book, int rating, String review) throws SQLException {
+            // assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
+            assertFalse(wasSuccessful(new DiLi().addReview(book, rating, review)));
+        }
+
+        public static Stream<Arguments> addReviewFail() throws SQLException {
+            return Stream.of(
+                    arguments(null, 3, "review"),
+                    arguments(conn.search("Book 1").get(0), -5, "review"),
+                    arguments(conn.search("Book 1").get(0), 50, "review")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void deleteReviewTrue(Book book, Review review) throws SQLException {
+            // assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
+            assertTrue(wasSuccessful(new DiLi().deleteReview(book, review)));
+        }
+
+        public static Stream<Arguments> deleteReviewTrue() throws SQLException {
+            // new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789");
+
+            return Stream.of(
+                    arguments(conn.search("Book 1").get(0), conn.getReview(1)),
+                    arguments(conn.search("Book 1").get(0), conn.getReview(2))
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void deleteReviewFail(Book book, Review review) throws SQLException {
+            //assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
+            assertFalse(wasSuccessful(new DiLi().deleteReview(book, review)));
+        }
+
+        public static Stream<Arguments> deleteReviewFail() throws SQLException {
+            return Stream.of(
+                    arguments(null, conn.getReview(1)),
+                    arguments(conn.search("Book 1"), null),
+                    arguments(conn.search("Book 2"), conn.getReview(1))
+            );
+        }
+    }*/
+
+
 
     /*@ParameterizedTest
     @MethodSource

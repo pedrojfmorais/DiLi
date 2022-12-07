@@ -17,7 +17,8 @@ public class Book {
     private String imagePath;
     private List<Review> reviews;
 
-    public Book(int id, String title, String author, String synopsis, String language, List<String> genres, boolean availability, double costPerDownload, Map<String, String> downloadFiles, String imagePath)
+    public Book(int id, String title, String author, String synopsis, String language, List<String> genres,
+                boolean availability, double costPerDownload, Map<String, String> downloadFiles, String imagePath)
     {
         this.id = id;
         this.title = title;
@@ -113,6 +114,13 @@ public class Book {
 
     public void addReview(Review review) {
         reviews.add(review);
+    }
+
+    public void removeReview(int id) {
+        for (Review review : reviews) {
+            if(review.getId() == id)
+                review.setReview(null);
+        }
     }
 
     @Override
