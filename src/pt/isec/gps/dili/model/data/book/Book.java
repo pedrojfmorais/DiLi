@@ -1,6 +1,5 @@
-package model.data.book;
+package pt.isec.gps.dili.model.data.book;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

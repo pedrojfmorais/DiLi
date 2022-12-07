@@ -1,7 +1,5 @@
 package model.data;
 
-import model.data.book.Book;
-import model.jdcb.ConnDB;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,9 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import pt.isec.gps.dili.model.data.DiLi;
+import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.MessageType;
+import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.jdcb.ConnDB;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -209,9 +211,9 @@ class DiLiTest {
         Book book = dili.search("Book 1").get(0);
 
         assertFalse(
-        wasSuccessful(dili.downloadBookTest(book, "a1234567@isec.pt"))
+        wasSuccessful(dili.downloadBookTest(book, "a1234567@isec.pt", "pdf"))
                 &&
-                wasSuccessful(dili.downloadBookTest(book, "a1234567@isec.pt"))
+                wasSuccessful(dili.downloadBookTest(book, "a1234567@isec.pt", "pdf"))
 
         );
     }

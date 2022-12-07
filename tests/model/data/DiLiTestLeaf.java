@@ -1,20 +1,19 @@
 package model.data;
 
-import model.data.book.Book;
-import model.data.book.Review;
-import model.data.user.User;
-import model.jdcb.ConnDB;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import pt.isec.gps.dili.model.data.DiLi;
+import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.MessageType;
+import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.jdcb.ConnDB;
 
-import java.sql.Array;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.lang.System.exit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -174,7 +173,7 @@ class DiLiTestLeaf {
         void authenticateSuccess(String email, String password) throws SQLException {
             //assertNotNull(new DiLi().authenticate(email, password));
             assertNotNull(new DiLi().authenticate(email, password));
-            assertEquals(MessageType.SUCCESS, (new DiLi().authenticate(email, password)).type);
+            assertEquals(MessageType.SUCCESS, (new DiLi().authenticate(email, password)).getType());
         }
 
         public static Stream<Arguments> authenticateSuccess() {
@@ -187,7 +186,7 @@ class DiLiTestLeaf {
         @MethodSource
         void authenticateFail(String email, String password) throws SQLException {
             assertNotNull(new DiLi().authenticate(email, password));
-            assertEquals(MessageType.ERROR, (new DiLi().authenticate(email, password)).type);
+            assertEquals(MessageType.ERROR, (new DiLi().authenticate(email, password)).getType());
         }
 
         public static Stream<Arguments> authenticateFail() {
@@ -299,7 +298,7 @@ class DiLiTestLeaf {
             //assertNotNull(new DiLi().authenticate(email, password));
             Message message = new DiLi().checkUserFieldsTest(name, email, password, false);
             assertNotNull(message);
-            assertEquals(MessageType.SUCCESS, message.type);
+            assertEquals(MessageType.SUCCESS, message.getType());
         }
 
         public static Stream<Arguments> checkUserFieldsSuccess() {
@@ -313,7 +312,7 @@ class DiLiTestLeaf {
         void checkUserFieldsFail(String name, String email, String password) throws SQLException {
             Message message = new DiLi().checkUserFieldsTest(name, email, password, false);
             assertNotNull(message);
-            assertEquals(MessageType.ERROR, message.type);
+            assertEquals(MessageType.ERROR, message.getType());
         }
 
         public static Stream<Arguments> checkUserFieldsFail() {
@@ -368,7 +367,7 @@ class DiLiTestLeaf {
             void createLibrarianSuccess(String name, String email, String password) throws SQLException {
                 Message message = new DiLi().createLibrarian(name, email, password);
                 assertNotNull(message);
-                assertEquals(MessageType.SUCCESS, message.type);
+                assertEquals(MessageType.SUCCESS, message.getType());
             }
 
             public static Stream<Arguments> createLibrarianSuccess() {
@@ -382,7 +381,7 @@ class DiLiTestLeaf {
             void createLibrarianFail(String name, String email, String password) throws SQLException {
                 Message message = new DiLi().createLibrarian(name, email, password);
                 assertNotNull(message);
-                assertEquals(MessageType.ERROR, message.type);
+                assertEquals(MessageType.ERROR, message.getType());
             }
 
             public static Stream<Arguments> createLibrarianFail() {
@@ -443,7 +442,7 @@ class DiLiTestLeaf {
         void updateLibrarianInfoSuccess(int id, String name, String email, String password) throws SQLException {
             Message message = new DiLi().updateLibrarianInfoTest(id, name, email, password);
             assertNotNull(message);
-            assertEquals(MessageType.SUCCESS, message.type);
+            assertEquals(MessageType.SUCCESS, message.getType());
         }
 
         public static Stream<Arguments> updateLibrarianInfoSuccess() {
@@ -457,7 +456,7 @@ class DiLiTestLeaf {
         void updateLibrarianInfoFail(int id, String name, String email, String password) throws SQLException {
             Message message = new DiLi().updateLibrarianInfoTest(id, name, email, password);
             assertNotNull(message);
-            assertEquals(MessageType.ERROR, message.type);
+            assertEquals(MessageType.ERROR, message.getType());
         }
 
         public static Stream<Arguments> updateLibrarianInfoFail() {
@@ -493,7 +492,7 @@ class DiLiTestLeaf {
             //assertNotNull(new DiLi().authenticate(email, password));
             Message message = new DiLi().checkBookFieldsTest(title, author, synopsis, language, genres, costPerDownload);
             assertNotNull(message);
-            assertEquals(MessageType.SUCCESS, message.type);
+            assertEquals(MessageType.SUCCESS, message.getType());
         }
 
         public static Stream<Arguments> checkBookFieldsSuccess() {
@@ -509,7 +508,7 @@ class DiLiTestLeaf {
                                     double costPerDownload) throws SQLException {
             Message message = new DiLi().checkBookFieldsTest(title, author, synopsis, language, genres, costPerDownload);
             assertNotNull(message);
-            assertEquals(MessageType.ERROR, message.type);
+            assertEquals(MessageType.ERROR, message.getType());
         }
 
         public static Stream<Arguments> checkBookFieldsFail() {
@@ -564,16 +563,19 @@ class DiLiTestLeaf {
         void addBookSuccess(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
                            Map<String, String> downloadLink, String imagePath) throws SQLException {
-            Message message = new DiLi().addBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            Message message = new DiLi()
+                    .addBook(title, author, synopsis, language, genres, availability,
+                            costPerDownload, downloadLink, imagePath);
             assertNotNull(message);
-            assertEquals(MessageType.SUCCESS, message.type);
+            assertEquals(MessageType.SUCCESS, message.getType());
         }
 
         public static Stream<Arguments> addBookSuccess() {
             Map<String, String> map = new HashMap<>();
             map.put("pdf", "urlLink");
             return Stream.of(
-                    arguments("Book 10", "Marco", "Book about a subject", "Portuguese", List.of("Genre1"), true, 0.003, map, "")
+                    arguments("Book 10", "Marco", "Book about a subject", "Portuguese",
+                            List.of("Genre1"), true, 0.003, map, "")
             );
         }
 
@@ -584,7 +586,7 @@ class DiLiTestLeaf {
                            Map<String, String> downloadLink, String imagePath) throws SQLException {
             Message message = new DiLi().addBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
             assertNotNull(message);
-            assertEquals(MessageType.ERROR, message.type);
+            assertEquals(MessageType.ERROR, message.getType());
         }
 
         public static Stream<Arguments> addBookFail() {

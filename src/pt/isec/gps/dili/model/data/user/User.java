@@ -1,4 +1,4 @@
-package model.data.user;
+package pt.isec.gps.dili.model.data.user;
 
 public class User {
     private final int id;

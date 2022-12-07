@@ -1,11 +1,10 @@
-package model.jdcb;
+package pt.isec.gps.dili.model.jdcb;
 
-import model.data.book.Book;
-import model.data.book.Review;
-import model.data.user.User;
-import model.data.user.UserType;
+import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.data.book.Review;
+import pt.isec.gps.dili.model.data.user.User;
+import pt.isec.gps.dili.model.data.user.UserType;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +72,7 @@ public class ConnDB {
                     resultSet.getInt("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
-                    UserType.Librarian
+                    UserType.LIBRARIAN
             );
         }
 

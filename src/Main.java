@@ -1,13 +1,18 @@
-import model.data.DiLi;
-import model.jdcb.ConnDB;
+import javafx.application.Application;
+import pt.isec.gps.dili.ui.gui.MainJFX;
 
-import java.sql.Array;
 import java.sql.SQLException;
-import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
+
+        //WARNING:
+        // VM OPTIONS:
+        //  --module-path "C:\Program Files\Java\javafx-sdk-17.0.2\lib" --add-modules javafx.controls
+        Application.launch(MainJFX.class, args);
+
+
         /*ArrayList<String> filters = new ArrayList<>();
         filters.add("Eletrónica");
         filters.add("Programming");
@@ -79,7 +84,6 @@ public class Main {
          */
 
         //System.out.println((new DiLi().search("autora")).toString());
-
 
 
     }
