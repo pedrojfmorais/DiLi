@@ -1,6 +1,7 @@
 package pt.isec.gps.dili.model.fsm;
 
 import pt.isec.gps.dili.model.data.DiLi;
+import pt.isec.gps.dili.model.data.Message;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -89,5 +90,9 @@ public class DiliContext {
      */
     public DiliState getState() {
         return state.getState() == null ? null : state.getState();
+    }
+
+    public Message login(String email, String password){
+        return state.login(email, password);
     }
 }
