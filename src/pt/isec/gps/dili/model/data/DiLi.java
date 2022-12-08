@@ -3,7 +3,7 @@ package pt.isec.gps.dili.model.data;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.data.book.Review;
 import pt.isec.gps.dili.model.data.user.User;
-import pt.isec.gps.dili.model.jdcb.ConnDB;
+import pt.isec.gps.dili.model.jdbc.ConnDB;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

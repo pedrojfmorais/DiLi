@@ -1,4 +1,4 @@
-package pt.isec.gps.dili.model.jdcb;
+package pt.isec.gps.dili.model.jdbc;
 
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.data.book.Review;

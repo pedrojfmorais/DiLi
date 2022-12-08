@@ -59,5 +59,14 @@
     </orderEntry>
     <orderEntry type="library" name="sqlite-jdbc-3.39.3.01" level="project" />
     <orderEntry type="library" name="javafx-sdk-17.0.2" level="application" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/src/pt/isec/gps/dili/model/jdbc/sqlite-jdbc-3.39.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

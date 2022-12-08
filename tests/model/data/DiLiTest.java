@@ -11,7 +11,7 @@ import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
 import pt.isec.gps.dili.model.data.MessageType;
 import pt.isec.gps.dili.model.data.book.Book;
-import pt.isec.gps.dili.model.jdcb.ConnDB;
+import pt.isec.gps.dili.model.jdbc.ConnDB;
 
 import java.sql.SQLException;
 import java.util.*;

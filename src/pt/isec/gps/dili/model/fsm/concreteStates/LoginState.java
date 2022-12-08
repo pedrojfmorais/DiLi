@@ -2,6 +2,7 @@ package pt.isec.gps.dili.model.fsm.concreteStates;
 
 import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.MessageType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 
@@ -12,7 +13,12 @@ public class LoginState extends DiliAdapter{
 
     @Override
     public Message login(String email, String password) {
-        return data.authenticate(email, password);
+        Message message = data.authenticate(email, password);
+
+        if(message.getType() == MessageType.SUCCESS)
+            changeState(DiliState.LOGIN);//TODO: corrigir
+
+        return message;
     }
 
     @Override
