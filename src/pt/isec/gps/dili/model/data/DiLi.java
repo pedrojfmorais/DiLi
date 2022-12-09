@@ -23,6 +23,10 @@ public class DiLi {
         loggedAccount = null;
     }
 
+    public static User getLoggedAccount() {
+        return loggedAccount;
+    }
+
     public Message authenticate(String email, String password) {
         try {
             if (!connDB.verifyLogin(email, password))

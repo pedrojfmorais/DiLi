@@ -1,27 +1,20 @@
-package pt.isec.gps.dili.ui.gui.controllers;
+package pt.isec.gps.dili.ui.gui.controllers.mainInterface;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
-import pt.isec.gps.dili.ui.gui.resources.ImageManager;
+import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.ScrollPaneBookItemAdminController;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class ScrollPaneBookItemsController implements Initializable {
@@ -47,6 +40,8 @@ public class ScrollPaneBookItemsController implements Initializable {
 
     private void createViews() throws IOException {
 
+        scrollPaneBookItems.setFitToWidth(true);
+        scrollPaneBookItems.setFitToHeight(true);
 
         VBox vBoxItems = new VBox();
         ArrayList<Book> books;
@@ -57,15 +52,19 @@ public class ScrollPaneBookItemsController implements Initializable {
         }
 
         for (var oneBook : books) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/mainInterfaceBookItemAdmin.fxml"));
-            Node n = loader.load();
-            n.setUserData(oneBook);
-            vBoxItems.getChildren().add(n);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/admin/scrollPaneBookItemAdmin.fxml"));
+
+            Node node = loader.load();
+
+            ScrollPaneBookItemAdminController mibiad = loader.getController();
+            mibiad.initData(oneBook);
+
+            node.minWidth(scrollPaneBookItems.getWidth());
+
+            vBoxItems.getChildren().add(node);
         }
 
         scrollPaneBookItems.setContent(vBoxItems);
-
-        scrollPaneBookItems.setPannable(true);
 
     }
 

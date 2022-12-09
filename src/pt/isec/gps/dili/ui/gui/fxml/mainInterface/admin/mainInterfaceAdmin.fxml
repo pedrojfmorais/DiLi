@@ -2,8 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -12,13 +13,13 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.MainInterfaceAdminController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.MainInterfaceAdminController">
    <top>
       <HBox alignment="BASELINE_CENTER" prefHeight="150.0" prefWidth="800.0">
          <children>
             <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="228.0" spacing="10.0">
                <children>
-                  <TextField fx:id="tfSearch" prefHeight="25.0" prefWidth="143.0" promptText="Search ...">
+                  <TextField fx:id="tfSearch" prefHeight="25.0" prefWidth="184.0" promptText="Search ...">
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
@@ -43,11 +44,17 @@
                         <Insets bottom="10.0" />
                      </HBox.margin>
                   </Label>
-                  <ComboBox fx:id="cbManage" prefHeight="25.0" prefWidth="115.0">
+                  <MenuButton fx:id="mbManage" mnemonicParsing="false" text="Manage">
+                    <items>
+                      <MenuItem fx:id="miProfile" mnemonicParsing="false" text="Profile" />
+                      <MenuItem fx:id="miAddBook" mnemonicParsing="false" text="Add Book" />
+                        <MenuItem fx:id="miAddLibrarian" mnemonicParsing="false" text="Add Librarian" />
+                        <MenuItem fx:id="miStatistics" mnemonicParsing="false" text="Statistics" />
+                    </items>
                      <HBox.margin>
                         <Insets bottom="10.0" />
                      </HBox.margin>
-                  </ComboBox>
+                  </MenuButton>
                   <Button fx:id="btnLogout" mnemonicParsing="false" text="LOG OUT">
                      <HBox.margin>
                         <Insets bottom="10.0" />
@@ -62,9 +69,9 @@
       </HBox>
    </top>
    <left>
-      <VBox fx:id="vboxFilters" prefHeight="450.0" prefWidth="160.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="vboxFilters" prefHeight="430.0" prefWidth="170.0" spacing="10.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets />
+            <Insets bottom="10.0" left="10.0" />
          </BorderPane.margin>
          <Label maxWidth="1.7976931348623157E308" text="Label">
             <VBox.margin>
@@ -74,6 +81,9 @@
       </VBox>
    </left>
    <center>
-      <Pane fx:id="paneItems" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="paneItems" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="430.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+         </BorderPane.margin></Pane>
    </center>
 </BorderPane>

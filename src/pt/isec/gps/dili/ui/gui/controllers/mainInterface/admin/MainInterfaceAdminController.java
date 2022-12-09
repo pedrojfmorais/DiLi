@@ -1,4 +1,4 @@
-package pt.isec.gps.dili.ui.gui.controllers;
+package pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
@@ -19,11 +20,17 @@ import java.util.ResourceBundle;
 
 public class MainInterfaceAdminController implements Initializable {
     @FXML
+    private MenuItem miProfile;
+    @FXML
+    private MenuItem miAddBook;
+    @FXML
+    private MenuItem miAddLibrarian;
+    @FXML
+    private MenuItem miStatistics;
+    @FXML
     private Pane paneItems;
     @FXML
     private VBox vboxFilters;
-    @FXML
-    private ComboBox<String> cbManage;
     private DiliContext fsm;
     @FXML
     private BorderPane borderPane;
@@ -35,6 +42,8 @@ public class MainInterfaceAdminController implements Initializable {
     private Label lbUsername;
     @FXML
     private Button btnLogout;
+    @FXML
+    private MenuButton mbManage;
 
     private String options[] = {"Profile", "Add Book", "Add Librarian", "Statistics"};
     private String comboBoxValue = "Manage";
@@ -51,10 +60,8 @@ public class MainInterfaceAdminController implements Initializable {
 
     private void createViews() {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
-        cbManage.setValue(comboBoxValue);
-        cbManage.setItems(FXCollections.observableArrayList(options));
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/scrollPaneBookItems.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
         try {
             paneItems.getChildren().add(loader.load());
         } catch (IOException e) {
@@ -66,11 +73,18 @@ public class MainInterfaceAdminController implements Initializable {
         fsm.addPropertyChangeListener(DiliContext.PROP_FASE, evt -> update());
 
         //TODO: seleção das cenas na combobox
+        miProfile.setOnAction(ev -> System.out.println("miProfile"));
+        miAddBook.setOnAction(ev -> System.out.println("miAddBook"));
+        miAddLibrarian.setOnAction(ev -> System.out.println("miAddLibrarian"));
+        miStatistics.setOnAction(ev -> System.out.println("miStatistics"));
 
         btnLogout.setOnAction(ev -> fsm.logout());
     }
 
     private void update() {
         borderPane.setVisible(fsm != null && fsm.getState() == DiliState.MainInterface);
+
+        if (DiLi.getLoggedAccount() != null)
+            lbUsername.setText(DiLi.getLoggedAccount().getName());
     }
 }

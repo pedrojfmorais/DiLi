@@ -1,4 +1,4 @@
-package pt.isec.gps.dili.ui.gui.controllers;
+package pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin;
 
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -6,12 +6,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MainInterfaceBookItemAdminController extends Node implements Initializable {
+public class ScrollPaneBookItemAdminController extends Node implements Initializable {
     private DiliContext fsm;
     public BorderPane bookInterfaceAdmin;
     public ImageView ivBook;
@@ -22,10 +23,17 @@ public class MainInterfaceBookItemAdminController extends Node implements Initia
     public Button btnEdit;
     public Button btnDelete;
 
+    public void initData(Book livro){
+        lbTitle.setText(livro.getTitle());
+        lbSynopsis.setText(livro.getSynopsis());
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         bookInterfaceAdmin.sceneProperty().addListener((observableValue, oldScene, newScene) -> {
             fsm = (DiliContext) newScene.getUserData();
+            if(observableValue instanceof Book)
+                System.out.println("è livro");
         });
     }
 }

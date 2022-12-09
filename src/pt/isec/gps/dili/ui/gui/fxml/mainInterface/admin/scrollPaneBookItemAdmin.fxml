@@ -8,20 +8,20 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="bookInterfaceAdmin" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.MainInterfaceBookItemAdminController">
+<BorderPane fx:id="bookInterfaceAdmin" prefHeight="105.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.ScrollPaneBookItemAdminController">
    <center>
       <HBox alignment="CENTER" prefHeight="202.0" prefWidth="532.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="ivBook" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-            <Region HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="ivBook" fitHeight="105.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true" />
+            <Region prefHeight="105.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                <children>
                   <Label fx:id="lbTitle" text="Label" />
                   <Label fx:id="lbSynopsis" text="Label" />
                </children>
             </VBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="202.0" prefWidth="229.0" spacing="10.0">
+            <Region prefHeight="202.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="202.0" prefWidth="248.0" spacing="10.0">
                <children>
                   <Button fx:id="btnInfo" mnemonicParsing="false" text="+ INFO" />
                   <Button fx:id="btnVisible" mnemonicParsing="false" text="Button" />
