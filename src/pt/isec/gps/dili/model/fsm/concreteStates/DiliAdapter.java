@@ -20,4 +20,9 @@ public abstract class DiliAdapter implements IDiliState {
     public Message login(String email, String password) {
         return null;
     }
+
+    @Override
+    public void logout() {
+
+    }
 }

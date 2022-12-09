@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.StackPaneWindowController">
+   <children>
+      <fx:include fx:id="login" source="login.fxml" />
+      <fx:include fx:id="adminInterface" source="mainInterfaceAdmin.fxml" />
+   </children>
+</StackPane>

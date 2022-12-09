@@ -16,17 +16,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
-    DiliContext fsm;
+    private DiliContext fsm;
     @FXML
-    BorderPane borderPane;
+    private BorderPane borderPane;
     @FXML
-    ImageView ivLogo;
+    private ImageView ivLogo;
     @FXML
-    TextField tfEmail, tfPassword;
+    private TextField tfEmail, tfPassword;
     @FXML
-    Label lbError;
+    private Label lbError;
     @FXML
-    Button btnLogin, btnExit;
+    private Button btnLogin, btnExit;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -52,5 +52,6 @@ public class LoginController implements Initializable {
 
     private void update() {
         borderPane.setVisible(fsm != null && fsm.getState() == DiliState.LOGIN);
+        lbError.setText("");
     }
 }

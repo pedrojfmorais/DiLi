@@ -3,7 +3,6 @@ package pt.isec.gps.dili.ui.gui;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -34,7 +33,7 @@ public class MainJFX extends Application {
         Scene scene = new Scene(new Pane(), 500, 500, Color.BLACK);
         scene.setUserData(fsm);
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/stackPane.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/stackPaneWindow.fxml"));
         scene.setRoot(loader.load());
 
         stage.setScene(scene);

@@ -19,6 +19,10 @@ public class DiliContext {
      */
     PropertyChangeSupport pcs;
 
+    public DiLi getData() {
+        return data;
+    }
+
     /**
      * modelo de dados utilizado
      */
@@ -94,5 +98,8 @@ public class DiliContext {
 
     public Message login(String email, String password){
         return state.login(email, password);
+    }
+    public void logout(){
+        state.logout();
     }
 }

@@ -37,6 +37,10 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "User logged in.");
     }
 
+    public void logout(){
+        loggedAccount = null;
+    }
+
     public Message createLibrarian(String name, String email, String password) throws SQLException {
         Message message = checkUserFields(name, email, password, false);
 
