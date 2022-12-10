@@ -745,18 +745,19 @@ class DiLiTestLeaf {
             clearDB();
             dbSeeder();
             conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 4, "review");
-            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
+            conn.addReview(conn.getUserInformation("a21280055321@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
         }
 
         @ParameterizedTest
         @MethodSource
-        void addReviewTrue(Book book, int rating, String review) throws SQLException {
-            assertTrue(wasSuccessful(new DiLi().addReview(book, rating, review)));
+        void addReviewTrue(Book book, int rating, String review, String email) throws SQLException {
+            conn.downloadBook(book.getId(), email, "pdf");
+            assertTrue(wasSuccessful(new DiLi().addReviewTest(book, rating, review, email)));
         }
 
         public static Stream<Arguments> addReviewTrue() throws SQLException {
             return Stream.of(
-                    arguments(conn.search("Book 1").get(0), 3, "review2")
+                    arguments(conn.search("Book 1").get(0), 3, "review2", "a1234567@isec.pt")
             );
         }
 
@@ -781,9 +782,10 @@ class DiLiTestLeaf {
         }
 
         public static Stream<Arguments> deleteReviewTrue() throws SQLException {
+            Book book = conn.search("Book 1").get(0);
             return Stream.of(
-                    arguments(conn.search("Book 1").get(0), conn.getReview(1)),
-                    arguments(conn.search("Book 1").get(0), conn.getReview(2))
+                    arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a123456@isec.pt"))),
+                    arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a21280055321@isec.pt")))
             );
         }
 
