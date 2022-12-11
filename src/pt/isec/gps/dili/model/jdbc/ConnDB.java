@@ -222,6 +222,12 @@ public class ConnDB {
 
     }
 
+    public void updateBookAvailability(int id) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "UPDATE book SET availability= NOT availability WHERE id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        statement.close();
+    }
 
     public void updateBook(int id, String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
@@ -296,6 +302,12 @@ public class ConnDB {
 
 
 
+    }
+    public void deleteBook(int id) throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "DELETE FROM book WHERE id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        statement.close();
     }
 
     public void clearDB(String passcode, boolean bdbf, boolean bg, boolean bl, boolean b, boolean g, boolean bdown) throws SQLException {
