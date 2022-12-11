@@ -318,6 +318,24 @@ public class DiLi {
      */
 
 
+    public Message addReviewTest(Book book, int rating, String review, String email) throws SQLException {
+        User loggedAccount = connDB.getUserInformation(email);
+        if (book == null) {
+            return new Message(null, MessageType.ERROR, "Book is null.");
+        }
+        if (loggedAccount == null) {
+            return new Message(null, MessageType.ERROR, "User is null");
+        }
+        if (!connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
+            if (rating < 1 || rating > 5)
+                return new Message("rating", MessageType.ERROR, "Invalid rating");
+            if (connDB.addReview(loggedAccount, book, rating, review) == 0)
+                return new Message(null, MessageType.ERROR, "Failed to add Review");
+            book.addReview(new Review(connDB.getReviewId(book.getId(), loggedAccount.getEmail()), loggedAccount.getEmail(), rating, review));
+            return new Message(null, MessageType.SUCCESS, "Review added successfully");
+        }
+        return new Message(null, MessageType.ERROR, "User must download the book before adding a rating/review.");
+    }
     public Message addReview(Book book, int rating, String review) throws SQLException {
         if (book == null)
             return new Message(null, MessageType.ERROR, "Book is null.");

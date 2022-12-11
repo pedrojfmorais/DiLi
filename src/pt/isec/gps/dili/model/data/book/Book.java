@@ -1,5 +1,6 @@
 package pt.isec.gps.dili.model.data.book;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class Book {
         this.costPerDownload = costPerDownload;
         this.downloadFiles = downloadFiles;
         this.imagePath = imagePath;
+
+        reviews = new ArrayList<>();
     }
 
     public int getId() {

@@ -8,6 +8,7 @@ import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
 import pt.isec.gps.dili.model.data.MessageType;
 import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.data.book.Review;
 import pt.isec.gps.dili.model.jdbc.ConnDB;
 
 import java.sql.SQLException;
@@ -736,38 +737,33 @@ class DiLiTestLeaf {
 
 
 
-    /*@Nested
-    class addReviewTest {
+    @Nested
+    class reviewTest {
 
-        *
-         * TODO
-         *
-         *
-         *
         @BeforeAll
         static void beforeAll() throws SQLException {
             clearDB();
             dbSeeder();
             conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 4, "review");
-            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
+            conn.addReview(conn.getUserInformation("a21280055321@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
         }
 
         @ParameterizedTest
         @MethodSource
-        void addReviewTrue(Book book, int rating, String review) throws SQLException {
-            assertTrue(wasSuccessful(new DiLi().addReview(book, rating, review)));
+        void addReviewTrue(Book book, int rating, String review, String email) throws SQLException {
+            conn.downloadBook(book.getId(), email, "pdf");
+            assertTrue(wasSuccessful(new DiLi().addReviewTest(book, rating, review, email)));
         }
 
         public static Stream<Arguments> addReviewTrue() throws SQLException {
             return Stream.of(
-                    arguments(conn.search("Book 1").get(0), 3, conn.getReview(1))
+                    arguments(conn.search("Book 1").get(0), 3, "review2", "a1234567@isec.pt")
             );
         }
 
         @ParameterizedTest
         @MethodSource
         void addReviewFail(Book book, int rating, String review) throws SQLException {
-            // assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
             assertFalse(wasSuccessful(new DiLi().addReview(book, rating, review)));
         }
 
@@ -782,34 +778,31 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void deleteReviewTrue(Book book, Review review) throws SQLException {
-            // assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
             assertTrue(wasSuccessful(new DiLi().deleteReview(book, review)));
         }
 
         public static Stream<Arguments> deleteReviewTrue() throws SQLException {
-            // new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789");
-
+            Book book = conn.search("Book 1").get(0);
             return Stream.of(
-                    arguments(conn.search("Book 1").get(0), conn.getReview(1)),
-                    arguments(conn.search("Book 1").get(0), conn.getReview(2))
+                    arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a123456@isec.pt"))),
+                    arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a21280055321@isec.pt")))
             );
         }
 
         @ParameterizedTest
         @MethodSource
         void deleteReviewFail(Book book, Review review) throws SQLException {
-            //assertNotNull(new DiLi().authenticate("a123456722@isec.pt", "!Qq123456789"));
             assertFalse(wasSuccessful(new DiLi().deleteReview(book, review)));
         }
 
         public static Stream<Arguments> deleteReviewFail() throws SQLException {
             return Stream.of(
                     arguments(null, conn.getReview(1)),
-                    arguments(conn.search("Book 1"), null),
-                    arguments(conn.search("Book 2"), conn.getReview(1))
+                    arguments(conn.search("Book 1").get(0), null),
+                    arguments(conn.search("Book 2").get(0), conn.getReview(1))
             );
         }
-    }*/
+    }
 
 
 

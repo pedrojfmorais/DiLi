@@ -599,7 +599,7 @@ public class ConnDB {
 
     public int addReview(User user, Book book, int rating, String review) throws SQLException {
         try(Statement statement = dbConn.createStatement()) {
-            String sqlQuery = "INSERT INTO rating_review VALUES ('" + user.getEmail() + "', '" + book.getId() + "', + '" + rating + "' + '" + review + "')";
+            String sqlQuery = "INSERT INTO rating_review (user_email, book_id, rating, review) VALUES ('" + user.getEmail() + "', '" + book.getId() + "', '" + rating + "', '" + review + "')";
             statement.close();
             return statement.executeUpdate(sqlQuery);
         } catch (SQLException e) {
@@ -626,9 +626,8 @@ public class ConnDB {
     }
 
     public int deleteReview(int id) throws SQLException {
-
         try(Statement statement = dbConn.createStatement()) {
-            String sqlQuery = "UPDATE rating_review SET review='" + null + "WHERE id='" + id + "'";
+            String sqlQuery = "UPDATE rating_review SET review='' WHERE id='" + id + "'";
             statement.close();
             return statement.executeUpdate(sqlQuery);
         } catch (SQLException e) {
