@@ -25,4 +25,7 @@ public abstract class DiliAdapter implements IDiliState {
     public void logout() {
 
     }
+    public void voltar() {
+
+    }
 }

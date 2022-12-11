@@ -6,6 +6,7 @@ public interface IDiliState {
 
     Message login(String email, String password);
     void logout();
+    void voltar();
 
     DiliState getState();
 }

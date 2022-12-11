@@ -16,7 +16,7 @@ public class LoginState extends DiliAdapter{
         Message message = data.authenticate(email, password);
 
         if(message.getType() == MessageType.SUCCESS)
-            changeState(DiliState.MainInterface);
+            changeState(DiliState.MAIN_INTERFACE);
 
         return message;
     }

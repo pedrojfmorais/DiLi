@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
@@ -44,6 +45,18 @@ public class LoginController implements Initializable {
 
     private void registerHandlers() {
         fsm.addPropertyChangeListener(DiliContext.PROP_FASE, evt -> update());
+
+        tfEmail.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnLogin.fire();
+            }
+        });
+
+        tfPassword.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                btnLogin.fire();
+            }
+        });
 
         btnLogin.setOnAction(ev -> lbError.setText(fsm.login(tfEmail.getText(), tfPassword.getText()).getMessage()));
 

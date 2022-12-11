@@ -4,19 +4,23 @@ import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 
-public class MainInterfaceAdmin extends DiliAdapter{
-    public MainInterfaceAdmin(DiliContext context, DiLi data) {
+public class ProfileState extends DiliAdapter{
+    public ProfileState(DiliContext context, DiLi data) {
         super(context, data);
     }
 
     @Override
+    public void voltar() {
+        changeState(DiliState.MAIN_INTERFACE);
+    }
+
+    @Override
     public void logout() {
-        data.logout();
-        changeState(DiliState.LOGIN);
+        new MainInterfaceAdminState(context, data).logout();
     }
 
     @Override
     public DiliState getState() {
-        return DiliState.MainInterface;
+        return DiliState.PROFILE;
     }
 }

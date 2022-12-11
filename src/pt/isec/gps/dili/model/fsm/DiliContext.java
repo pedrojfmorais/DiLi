@@ -102,4 +102,7 @@ public class DiliContext {
     public void logout(){
         state.logout();
     }
+    public void voltar(){
+        state.voltar();
+    }
 }

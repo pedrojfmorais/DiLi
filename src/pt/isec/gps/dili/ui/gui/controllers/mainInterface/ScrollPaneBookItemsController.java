@@ -46,6 +46,7 @@ public class ScrollPaneBookItemsController implements Initializable {
         VBox vBoxItems = new VBox();
         ArrayList<Book> books;
         try {
+            //TODO: alterar função
             books = fsm.getData().search("");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,6 +74,6 @@ public class ScrollPaneBookItemsController implements Initializable {
     }
 
     private void update() {
-        scrollPaneBookItems.setVisible(fsm != null && fsm.getState() == DiliState.MainInterface);
+        scrollPaneBookItems.setVisible(fsm != null && fsm.getState() == DiliState.MAIN_INTERFACE);
     }
 }
