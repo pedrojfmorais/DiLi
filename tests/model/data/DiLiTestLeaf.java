@@ -545,7 +545,7 @@ class DiLiTestLeaf {
                                List<String> genres, boolean availability, double costPerDownload,
                                Map<String, String> downloadLink, String imagePath) throws SQLException {
             conn.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
-            Book book = conn.search(title).get(0);
+            Book book = conn.search(title, false).get(0);
             assertNotNull(book);
             assertEquals(1, book.getGenres().size());
             assertEquals(1, book.getDownloadFiles().size());
@@ -616,7 +616,7 @@ class DiLiTestLeaf {
         @ParameterizedTest
         @MethodSource
         void searchSuccess(String search, int howMany) throws SQLException {
-            ArrayList<Book> books = conn.search(search);
+            ArrayList<Book> books = conn.search(search, false);
             assertNotNull(books);
             assertEquals(howMany, books.size());
         }
@@ -649,18 +649,18 @@ class DiLiTestLeaf {
 
         @ParameterizedTest
         @MethodSource
-        void filtersSuccess(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, int howMany) throws SQLException {
-            ArrayList<Book> books = new DiLi().listByFilters(filtersGenre, filtersLanguage, filtersFormat);
+        void filtersSuccess(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, int howMany, boolean isAdmin) throws SQLException {
+            ArrayList<Book> books = new DiLi().listByFiltersTest(filtersGenre, filtersLanguage, filtersFormat, isAdmin);
             assertNotNull(books);
             assertEquals(howMany, books.size());
         }
 
         public static Stream<Arguments> filtersSuccess() {
             return Stream.of(
-                    arguments(List.of("java"), List.of("english"), List.of("pdf"), 1),
-                    arguments(List.of("java"), List.of("english"), List.of("pdf", "epub"), 1),
-                    arguments(List.of("eletrónica"), List.of("English"), List.of("pdf", "epub"), 0),
-                    arguments(List.of("eletrónica"), List.of("french"), List.of("pdf", "epub"), 1)
+                    arguments(List.of("java"), List.of("english"), List.of("pdf"), 1, false),
+                    arguments(List.of("java"), List.of("english"), List.of("pdf", "epub"), 1, false),
+                    arguments(List.of("eletrónica"), List.of("English"), List.of("pdf", "epub"), 0, false),
+                    arguments(List.of("eletrónica"), List.of("french"), List.of("pdf", "epub"), 1, false)
                     /*arguments(new ArrayList<>(), 0),
                     arguments(null, 0),
                     arguments((ArrayList<String>)List.of("Eletrónica", "Programming", "Fisica"), 5),
@@ -744,8 +744,8 @@ class DiLiTestLeaf {
         static void beforeAll() throws SQLException {
             clearDB();
             dbSeeder();
-            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1").get(0), 4, "review");
-            conn.addReview(conn.getUserInformation("a21280055321@isec.pt"), conn.search("Book 1").get(0), 3, "review1");
+            conn.addReview(conn.getUserInformation("a123456@isec.pt"), conn.search("Book 1", false).get(0), 4, "review");
+            conn.addReview(conn.getUserInformation("a21280055321@isec.pt"), conn.search("Book 1", false).get(0), 3, "review1");
         }
 
         @ParameterizedTest
@@ -757,7 +757,7 @@ class DiLiTestLeaf {
 
         public static Stream<Arguments> addReviewTrue() throws SQLException {
             return Stream.of(
-                    arguments(conn.search("Book 1").get(0), 3, "review2", "a1234567@isec.pt")
+                    arguments(conn.search("Book 1", false).get(0), 3, "review2", "a1234567@isec.pt")
             );
         }
 
@@ -770,8 +770,8 @@ class DiLiTestLeaf {
         public static Stream<Arguments> addReviewFail() throws SQLException {
             return Stream.of(
                     arguments(null, 3, "review"),
-                    arguments(conn.search("Book 1").get(0), -5, "review"),
-                    arguments(conn.search("Book 1").get(0), 50, "review")
+                    arguments(conn.search("Book 1", false).get(0), -5, "review"),
+                    arguments(conn.search("Book 1", false).get(0), 50, "review")
             );
         }
 
@@ -782,7 +782,7 @@ class DiLiTestLeaf {
         }
 
         public static Stream<Arguments> deleteReviewTrue() throws SQLException {
-            Book book = conn.search("Book 1").get(0);
+            Book book = conn.search("Book 1", false).get(0);
             return Stream.of(
                     arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a123456@isec.pt"))),
                     arguments(book, conn.getReview(conn.getReviewId(book.getId(), "a21280055321@isec.pt")))
@@ -798,8 +798,8 @@ class DiLiTestLeaf {
         public static Stream<Arguments> deleteReviewFail() throws SQLException {
             return Stream.of(
                     arguments(null, conn.getReview(1)),
-                    arguments(conn.search("Book 1").get(0), null),
-                    arguments(conn.search("Book 2").get(0), conn.getReview(1))
+                    arguments(conn.search("Book 1", false).get(0), null),
+                    arguments(conn.search("Book 2", false).get(0), conn.getReview(1))
             );
         }
     }

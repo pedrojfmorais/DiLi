@@ -9,6 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ComboBox?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <BorderPane fx:id="addBook" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="400.0" style="-fx-border-color: black; -fx-border-radius: 15px;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.AddBookController">
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
@@ -27,21 +30,39 @@
             <HBox prefHeight="100.0" prefWidth="200.0" />
             <TextField fx:id="tfTitle" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Title" />
             <TextField fx:id="tfAuthor" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Author" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <VBox fx:id="genreVBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField fx:id="tfGenre" prefWidth="200.0" promptText="Genre" />
-                  <Button fx:id="btnAddGenre" mnemonicParsing="false" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <TextField fx:id="tfGenre" prefWidth="200.0" promptText="Genre" />
+                        <Button fx:id="btnAddGenre" mnemonicParsing="false" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
             <TextField fx:id="tfLanguage" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Language" />
             <TextArea fx:id="tfSynopsis" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Synopsis" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <VBox fx:id="downloadVBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <TextField fx:id="tfBookFormat" maxWidth="-Infinity" prefWidth="85.0" promptText="Book Format" />
-                  <TextField fx:id="tfLink" maxWidth="-Infinity" prefWidth="125.0" promptText="Link" />
-                  <Button fx:id="btnAddBookFormat" mnemonicParsing="false" />
+                  <HBox fx:id="downloadHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ComboBox fx:id="cbBookFormat" layoutX="15.0" layoutY="33.0" prefWidth="90.0" promptText="choose">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="PDF" />
+                                 <String fx:value="EPUB" />
+                                 <String fx:value="MOBI" />
+                                 <String fx:value="AZW" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
+                        <!--<TextField fx:id="tfBookFormat" maxWidth="-Infinity" prefWidth="85.0" promptText="Book Format" />-->
+                        <TextField fx:id="tfLink" maxWidth="-Infinity" prefWidth="125.0" promptText="Link" />
+                        <Button fx:id="btnAddBookFormat" mnemonicParsing="false" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
             <TextField fx:id="tfPrice" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Price" />
             <HBox prefHeight="100.0" prefWidth="200.0" />
          </children>

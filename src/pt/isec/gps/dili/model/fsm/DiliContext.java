@@ -105,4 +105,10 @@ public class DiliContext {
     public void voltar(){
         state.voltar();
     }
+
+    public Message createLibrarian(String name, String email, String password) throws SQLException {
+        System.out.println("hi");
+        return null;
+        //return data.createLibrarian(name, email, password);
+    }
 }

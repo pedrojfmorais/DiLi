@@ -495,7 +495,7 @@ public class ConnDB {
         return stringBuilder.toString();
     }
 
-    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
+    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, boolean isAdmin) throws SQLException {
 
         /*
         SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE
@@ -523,6 +523,8 @@ public class ConnDB {
                 formats +
                 " WHERE book.id = book_language.book_id AND language.id = book_language.language_id " +
                 languages;
+        if(!isAdmin)
+            sqlQuery += " AND book.availability='true'";
 
         /*StringBuilder sqlQuery = new StringBuilder("SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE " +
                 "book.id = book_genre.book_id AND " +
@@ -545,12 +547,14 @@ public class ConnDB {
 
         return bookArrayList;
     }
-    public ArrayList<Book> listAllBooks() throws SQLException {
+    public ArrayList<Book> listAllBooks(boolean isAdmin) throws SQLException {
 
 
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "SELECT * FROM book WHERE availability='true'";
+        String sqlQuery = "SELECT * FROM book";
+        if(!isAdmin)
+            sqlQuery += " WHERE availability='true'";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
         ArrayList<Book> bookArrayList = listBooks(resultSet);
@@ -560,15 +564,18 @@ public class ConnDB {
 
         return bookArrayList;
     }
-    public ArrayList<Book> search(String search) throws SQLException {
+    public ArrayList<Book> search(String search, boolean isAdmin) throws SQLException {
+
         if(search.isBlank())
-            return listAllBooks();
+            return listAllBooks(isAdmin);
 
         Statement statement = dbConn.createStatement();
 
         String sqlQuery = "SELECT * FROM book " +
                 "WHERE (title LIKE '%" + search + "%' " +
-                "OR author LIKE  '%" + search + "%') AND availability='true'";
+                "OR author LIKE  '%" + search + "%')";
+        if(!isAdmin)
+            sqlQuery += " AND availability='true'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
         ArrayList<Book> bookArrayList = listBooks(resultSet);
@@ -579,11 +586,13 @@ public class ConnDB {
         return bookArrayList;
     }
 
-    public Book getBookById(int id) throws SQLException {
+    public Book getBookById(int id, boolean isAdmin) throws SQLException {
         Book book = null;
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "SELECT * FROM book " + "WHERE availability='true' AND id='" + id + "'";
+        String sqlQuery = "SELECT * FROM book " + "WHERE id='" + id + "'";
+        if(!isAdmin)
+            sqlQuery += " AND availability='true'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 

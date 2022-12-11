@@ -3,6 +3,7 @@ package pt.isec.gps.dili.model.data;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.data.book.Review;
 import pt.isec.gps.dili.model.data.user.User;
+import pt.isec.gps.dili.model.data.user.UserType;
 import pt.isec.gps.dili.model.jdbc.ConnDB;
 
 import java.sql.ResultSet;
@@ -215,9 +216,11 @@ public class DiLi {
         connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
-
+    private boolean isAdmin() {
+        return loggedAccount.getTypeUser() == UserType.LIBRARIAN;
+    }
     public ArrayList<Book> search(String search) throws SQLException {
-        return connDB.search(search);
+        return connDB.search(search, isAdmin());
     }
 
     public Message downloadBook(Book book, String format) throws SQLException {
@@ -241,12 +244,15 @@ public class DiLi {
     /*
      * List by Filters
      */
+    public ArrayList<Book> listByFiltersTest(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat, boolean isAdmin) throws SQLException {
+        if (filtersGenre != null && filtersLanguage != null && filtersFormat != null)
+            return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin);
+        return new ArrayList<>();
+    }
     public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
         if (filtersGenre != null && filtersLanguage != null && filtersFormat != null)
-            return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat);
+            return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin());
         return new ArrayList<>();
-
-
     }
     /*
      * End List by Filters
@@ -257,7 +263,7 @@ public class DiLi {
 
     public double copyrightAllBooks() throws SQLException {
 
-        ArrayList<Book> books = connDB.listAllBooks();
+        ArrayList<Book> books = connDB.listAllBooks(isAdmin());
 
         double total = 0;
         for (Book book : books) {
@@ -283,7 +289,7 @@ public class DiLi {
 
         HashMap<String, Integer> result = new HashMap<>();
 
-        List<Book> books = connDB.listAllBooks();
+        List<Book> books = connDB.listAllBooks(isAdmin());
 
         for (Book book : books) {
 
