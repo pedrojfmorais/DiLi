@@ -21,20 +21,25 @@ public class ScrollPaneBookItemsController implements Initializable {
     private DiliContext fsm;
     @FXML
     private ScrollPane scrollPaneBookItems;
+    private String filtro = "";
+
+    public void initData(String filtro) {
+        this.filtro = filtro;
+
+        try {
+            createViews();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        registerHandlers();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         scrollPaneBookItems.sceneProperty().addListener((observableValue, oldScene, newScene) -> {
-            fsm = (DiliContext) newScene.getUserData();
-
-            try {
-                createViews();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            registerHandlers();
-            update();
+            if (newScene != null)
+                fsm = (DiliContext) newScene.getUserData();
         });
     }
 
@@ -46,8 +51,7 @@ public class ScrollPaneBookItemsController implements Initializable {
         VBox vBoxItems = new VBox();
         ArrayList<Book> books;
         try {
-            //TODO: alterar função
-            books = fsm.getData().search("");
+            books = fsm.getData().search(filtro);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +59,12 @@ public class ScrollPaneBookItemsController implements Initializable {
         for (var oneBook : books) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/admin/scrollPaneBookItemAdmin.fxml"));
 
-            Node node = loader.load();
+            Node node;
+            try {
+                node = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             ScrollPaneBookItemAdminController mibiad = loader.getController();
             mibiad.initData(oneBook);
@@ -64,9 +73,7 @@ public class ScrollPaneBookItemsController implements Initializable {
 
             vBoxItems.getChildren().add(node);
         }
-
         scrollPaneBookItems.setContent(vBoxItems);
-
     }
 
     private void registerHandlers() {

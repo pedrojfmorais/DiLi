@@ -43,10 +43,14 @@ public class ProfileController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         profile.sceneProperty().addListener((observableValue, oldScene, newScene) -> {
-            fsm = (DiliContext) newScene.getUserData();
-            createViews();
-            registerHandlers();
-            update();
+            if (newScene != null)
+                fsm = (DiliContext) newScene.getUserData();
+
+            if (fsm != null) {
+                createViews();
+                registerHandlers();
+                update();
+            }
         });
     }
 
@@ -65,7 +69,8 @@ public class ProfileController implements Initializable {
 
         btnVoltar.setOnAction(ev -> fsm.voltar());
         //TODO:
-        btnEditar.setOnAction(ev -> {});
+        btnEditar.setOnAction(ev -> {
+        });
     }
 
     private void update() {

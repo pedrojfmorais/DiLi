@@ -17,6 +17,7 @@ import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.controllers.mainInterface.ProfileController;
+import pt.isec.gps.dili.ui.gui.controllers.mainInterface.ScrollPaneBookItemsController;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
 import java.io.IOException;
@@ -67,13 +68,13 @@ public class MainInterfaceAdminController implements Initializable {
     private void createViews() throws IOException {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
 
-        FXMLLoader loaderScrollPaneBookItems = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
-        FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/profile.fxml"));
-        try {
-            paneItems.getChildren().addAll((Node) loaderScrollPaneBookItems.load(), (Node) loaderProfile.load());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        FXMLLoader loaderScrollPaneBookItems = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+//        FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/profile.fxml"));
+//        try {
+//            paneItems.getChildren().addAll((Node) loaderScrollPaneBookItems.load(), (Node) loaderProfile.load());
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void registerHandlers() {
@@ -84,30 +85,41 @@ public class MainInterfaceAdminController implements Initializable {
         miAddBook.setOnAction(ev -> {
             FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/admin/addBook.fxml"));
             Stage dialog = new Stage();
+            Scene scene = new Scene(new Pane());
+            scene.setUserData(fsm);
             try {
-                dialog.setScene(new Scene(loaderProfile.load()));
+                scene.setRoot(loaderProfile.load());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            dialog.setScene(scene);
+
             dialog.initStyle(StageStyle.UNDECORATED);
             dialog.getIcons().add(ImageManager.getImage("logo.png"));
             dialog.initOwner(borderPane.getScene().getWindow());
             dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.getScene().setUserData(fsm);
             dialog.showAndWait();
 
         });
         miAddLibrarian.setOnAction(ev -> {
             FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/admin/addLibrarian.fxml"));
             Stage dialog = new Stage();
+            Scene scene = new Scene(new Pane());
+            scene.setUserData(fsm);
             try {
-                dialog.setScene(new Scene(loaderProfile.load()));
+                scene.setRoot(loaderProfile.load());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+            dialog.setScene(scene);
             dialog.initStyle(StageStyle.UNDECORATED);
             dialog.getIcons().add(ImageManager.getImage("logo.png"));
             dialog.initOwner(borderPane.getScene().getWindow());
             dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.getScene().setUserData(fsm);
             dialog.showAndWait();
 
         });
@@ -125,15 +137,38 @@ public class MainInterfaceAdminController implements Initializable {
 
         if (DiLi.getLoggedAccount() != null)
             lbUsername.setText(DiLi.getLoggedAccount().getName());
-//
-//        if (fsm.getState() == DiliState.MAIN_INTERFACE) {
-//            paneItems.getChildren().clear();
-//            paneItems.getChildren().add(nodeBookSearch);
-//        }
-//
-//        if (fsm.getState() == DiliState.PROFILE) {
-//            paneItems.getChildren().clear();
-//            paneItems.getChildren().add(nodeProfile);
-//        }
+
+        if (fsm.getState() == DiliState.MAIN_INTERFACE) {
+            if (paneItems.getChildren().size() > 0)
+                paneItems.getChildren().remove(0);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+
+            Node node;
+            try {
+                node = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            ScrollPaneBookItemsController spbic = loader.getController();
+            String filter = tfSearch.getText();
+
+            paneItems.getChildren().add(node);
+            spbic.initData(filter.isEmpty() ? "" : filter);
+        }
+
+        if (fsm.getState() == DiliState.PROFILE) {
+            if (paneItems.getChildren().size() > 0)
+                paneItems.getChildren().remove(0);
+
+            FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/profile.fxml"));
+
+            try {
+                paneItems.getChildren().add(loaderProfile.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

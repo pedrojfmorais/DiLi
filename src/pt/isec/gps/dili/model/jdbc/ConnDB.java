@@ -439,7 +439,7 @@ public class ConnDB {
                 resultSet.getString("synopsis"),
                 getBookLanguage(bookId),
                 getBookGenres(bookId),
-                resultSet.getBoolean("availability"),
+                Boolean.parseBoolean(resultSet.getString("availability")),
                 resultSet.getDouble("costPerDownload"),
                 getBookDownloadFile(bookId),
                 resultSet.getString("image_path"));

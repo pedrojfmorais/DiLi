@@ -1,11 +1,11 @@
 package pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin;
 
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.MessageType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
@@ -21,7 +21,11 @@ public class AddLibrarianController implements Initializable {
     public TextField tfPassword;
     public Button btnConfirm;
     public Button btnCancel;
+    public Label lbName;
+    public Label lbEmail;
+    public Label lbPassword;
     private DiliContext fsm;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addLibrarian.sceneProperty().addListener((observableValue, oldScene, newScene) -> {
@@ -40,11 +44,35 @@ public class AddLibrarianController implements Initializable {
             stage.close();
         });
         btnConfirm.setOnAction(ev -> {
-            System.out.println(tfName.getText());
-            System.out.println(tfEmail.getText());
-            System.out.println(tfPassword.getText());
-            System.out.println(fsm.getState()); // Dá erro aqui porque o fsm é null
 
+            Message message = fsm.createLibrarian(tfName.getText(), tfEmail.getText(), tfPassword.getText());
+
+            if (message.getType() == MessageType.SUCCESS) {
+                Alert alert = new Alert(
+                        Alert.AlertType.INFORMATION,
+                        "",
+                        ButtonType.OK
+                );
+                alert.setTitle(message.getField());
+                alert.setHeaderText(message.getMessage());
+
+                alert.showAndWait().ifPresent(response -> {
+                    Stage stage = (Stage) addLibrarian.getScene().getWindow();
+                    stage.close();
+                });
+            } else {
+
+                Alert alert = new Alert(
+                        Alert.AlertType.ERROR,
+                        "",
+                        ButtonType.OK
+                );
+                alert.setTitle("Error");
+                alert.setHeaderText("Field: " + message.getField());
+                alert.setContentText(message.getMessage());
+
+                alert.showAndWait();
+            }
         });
     }
 }

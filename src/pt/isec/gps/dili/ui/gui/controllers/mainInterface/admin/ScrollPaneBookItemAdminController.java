@@ -26,12 +26,12 @@ public class ScrollPaneBookItemAdminController extends Node implements Initializ
     public Button btnDelete;
     Book livro;
 
-    public void initData(Book livro){
+    public void initData(Book livro) {
 
         this.livro = livro;
 
         Image img = ImageManager.getImage(livro.getImagePath());
-        if(img == null)
+        if (img == null)
             img = ImageManager.getImage("book_generic.png");
 
         ivBook.setImage(img);
@@ -48,20 +48,25 @@ public class ScrollPaneBookItemAdminController extends Node implements Initializ
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         bookInterfaceAdmin.sceneProperty().addListener((observableValue, oldScene, newScene) -> {
-            fsm = (DiliContext) newScene.getUserData();
+            if(newScene != null)
+                fsm = (DiliContext) newScene.getUserData();
             registerHandlers();
+            update();
         });
     }
 
     private void registerHandlers() {
-        fsm.addPropertyChangeListener(DiliContext.PROP_FASE, evt -> update());
+        if (fsm != null)
+            fsm.addPropertyChangeListener(DiliContext.PROP_LIVROS, evt -> update());
+
+        btnVisible.setOnAction(ev -> fsm.changeBookVisibility(livro.getId()));
+        //TODO: butões
     }
 
     private void update() {
-        if(livro.isAvailability())
+        if (livro.isAvailability())
             btnVisible.setGraphic(ImageManager.getImageView("visible_icon.png", 20));
         else
             btnVisible.setGraphic(ImageManager.getImageView("not_visible_icon.png", 20));
     }
-
 }

@@ -28,4 +28,12 @@ public abstract class DiliAdapter implements IDiliState {
     public void voltar() {
 
     }
+    public void changeBookVisibility(int idLivro){
+
+    }
+
+    @Override
+    public Message createLibrarian(String name, String email, String password) {
+        return null;
+    }
 }

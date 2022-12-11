@@ -13,6 +13,7 @@ public class DiliContext {
      * constante identificativa para alteração ao estado atual
      */
     public static final String PROP_FASE = "_FASE_";
+    public static final String PROP_LIVROS = "_LIVROS_";
 
     /**
      * objeto que permite atualização automática dos dados na interface gráfica
@@ -76,6 +77,9 @@ public class DiliContext {
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(property, listener);
     }
+    public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(property, listener);
+    }
 
     /**
      * alterar o estado atual
@@ -106,9 +110,12 @@ public class DiliContext {
         state.voltar();
     }
 
-    public Message createLibrarian(String name, String email, String password) throws SQLException {
-        System.out.println("hi");
-        return null;
-        //return data.createLibrarian(name, email, password);
+    public Message createLibrarian(String name, String email, String password){
+        return state.createLibrarian(name, email, password);
+    }
+
+    public void changeBookVisibility(int idLivro){
+        state.changeBookVisibility(idLivro);
+        pcs.firePropertyChange(PROP_LIVROS, null, null);
     }
 }

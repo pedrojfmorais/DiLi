@@ -42,7 +42,7 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "User logged in.");
     }
 
-    public void logout(){
+    public void logout() {
         loggedAccount = null;
     }
 
@@ -52,7 +52,7 @@ public class DiLi {
         if (message.getType().equals(MessageType.ERROR))
             return message;
 
-        connDB.insertLibrarian(name, email, password);
+        connDB.insertLibrarian(email, name, password);
         return new Message(null, MessageType.SUCCESS, "Librarian created.");
     }
 
@@ -87,7 +87,7 @@ public class DiLi {
 
         // Check if email is of type @domain
         if (!verifyEmailValidity(email))
-            return new Message("email", MessageType.ERROR, "Email is invalid. Email should be of type: personal_info@domain");
+            return new Message("email", MessageType.ERROR, "Email is invalid. Email should be of type: personal_info@domain.extension");
 
         // Check password security
         if (!verifyPasswordSecurity(password))
@@ -216,9 +216,13 @@ public class DiLi {
         connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
+
     private boolean isAdmin() {
-        return loggedAccount.getTypeUser() == UserType.LIBRARIAN;
+        if (loggedAccount != null)
+            return loggedAccount.getTypeUser() == UserType.LIBRARIAN;
+        return false;
     }
+
     public ArrayList<Book> search(String search) throws SQLException {
         return connDB.search(search, isAdmin());
     }
@@ -249,6 +253,7 @@ public class DiLi {
             return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin);
         return new ArrayList<>();
     }
+
     public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
         if (filtersGenre != null && filtersLanguage != null && filtersFormat != null)
             return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin());
@@ -342,6 +347,7 @@ public class DiLi {
         }
         return new Message(null, MessageType.ERROR, "User must download the book before adding a rating/review.");
     }
+
     public Message addReview(Book book, int rating, String review) throws SQLException {
         if (book == null)
             return new Message(null, MessageType.ERROR, "Book is null.");
@@ -368,5 +374,9 @@ public class DiLi {
         }
         book.removeReview(review.getId());
         return new Message(null, MessageType.SUCCESS, "Review deleted successfully.");
+    }
+
+    public void changeBookVisibility(int idLivro){
+        //TODO: alterar visibilidade
     }
 }
