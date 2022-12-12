@@ -2,10 +2,13 @@ package pt.isec.gps.dili.model.fsm;
 
 import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.MessageType;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public class DiliContext {
 
@@ -13,7 +16,8 @@ public class DiliContext {
      * constante identificativa para alteração ao estado atual
      */
     public static final String PROP_FASE = "_FASE_";
-    public static final String PROP_LIVROS = "_LIVROS_";
+    public static final String PROP_BOOK = "_LIVROS_";
+    public static final String PROP_USER = "_USER_";
 
     /**
      * objeto que permite atualização automática dos dados na interface gráfica
@@ -77,6 +81,7 @@ public class DiliContext {
     public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(property, listener);
     }
+
     public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(property, listener);
     }
@@ -100,22 +105,63 @@ public class DiliContext {
         return state.getState() == null ? null : state.getState();
     }
 
-    public Message login(String email, String password){
+    public Message login(String email, String password) {
         return state.login(email, password);
     }
-    public void logout(){
+
+    public void logout() {
         state.logout();
     }
-    public void voltar(){
+
+    public void voltar() {
         state.voltar();
     }
 
-    public Message createLibrarian(String name, String email, String password){
+    public Message createLibrarian(String name, String email, String password) {
         return state.createLibrarian(name, email, password);
     }
 
-    public void changeBookVisibility(int idLivro){
+    public Message updateLibrarianInfo(String name, String email, String password) {
+        Message message = state.updateLibrarianInfo(name, email, password);
+        if (message.getType() == MessageType.SUCCESS)
+            pcs.firePropertyChange(PROP_USER, null, null);
+        return message;
+    }
+
+    public void changeBookVisibility(int idLivro) {
         state.changeBookVisibility(idLivro);
-        pcs.firePropertyChange(PROP_LIVROS, null, null);
+        pcs.firePropertyChange(PROP_BOOK, null, null);
+    }
+
+    public void removeBook(int idLivro) {
+        state.removeBook(idLivro);
+        pcs.firePropertyChange(PROP_FASE, null, null);
+        pcs.firePropertyChange(PROP_BOOK, null, null);
+    }
+
+    public Message addBook(String title, String author, String synopsis, String language,
+                           List<String> genres, boolean availability, double costPerDownload,
+                           Map<String, String> downloadLink, String imagePath){
+
+        Message message = state.addBook(title, author, synopsis, language, genres, availability,
+                costPerDownload, downloadLink, imagePath);
+
+        if (message.getType() == MessageType.SUCCESS)
+            pcs.firePropertyChange(PROP_BOOK, null, null);
+
+        return message;
+    }
+
+    public Message updateBookInfo(int id, String title, String author, String synopsis, String language,
+                                  List<String> genres, boolean availability, double costPerDownload,
+                                  Map<String, String> downloadLink, String imagePath){
+
+        Message message = state.updateBookInfo(id, title, author, synopsis, language, genres, availability,
+                costPerDownload, downloadLink, imagePath);
+
+        if (message.getType() == MessageType.SUCCESS)
+            pcs.firePropertyChange(PROP_BOOK, null, null);
+
+        return message;
     }
 }

@@ -244,7 +244,7 @@ public class ConnDB {
                 "author='%s', " +
                 "availability='%b', " +
                 "costPerDownload='%f', " +
-                "image_path='%s' WHERE id='%d'",
+                "image_path='%s' WHERE id='%s'",
                 title, synopsis, author, availability, costPerDownload, id, imagePath);
         statement.executeUpdate(sqlQuery);
 
@@ -299,9 +299,6 @@ public class ConnDB {
             statement.executeUpdate(sqlQuery);
         }
         statement.close();
-
-
-
     }
     public void deleteBook(int id) throws SQLException {
         Statement statement = dbConn.createStatement();
@@ -378,7 +375,7 @@ public class ConnDB {
     }
     public String getBookLanguage(int bookId) throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "SELECT name FROM book_language, language " +
+        String sqlQuery = "SELECT language.name FROM book_language, language " +
                 "WHERE book_language.language_id = language.id AND " +
                 "book_id=" + bookId;
 
@@ -451,7 +448,7 @@ public class ConnDB {
                 resultSet.getString("synopsis"),
                 getBookLanguage(bookId),
                 getBookGenres(bookId),
-                Boolean.parseBoolean(resultSet.getString("availability")),
+                resultSet.getBoolean("availability"),
                 resultSet.getDouble("costPerDownload"),
                 getBookDownloadFile(bookId),
                 resultSet.getString("image_path"));

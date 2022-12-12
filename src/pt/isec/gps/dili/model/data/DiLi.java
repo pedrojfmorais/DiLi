@@ -46,13 +46,18 @@ public class DiLi {
         loggedAccount = null;
     }
 
-    public Message createLibrarian(String name, String email, String password) throws SQLException {
-        Message message = checkUserFields(name, email, password, false);
+    public Message createLibrarian(String name, String email, String password) {
+        try {
+            Message message = checkUserFields(name, email, password, false);
 
-        if (message.getType().equals(MessageType.ERROR))
-            return message;
 
-        connDB.insertLibrarian(email, name, password);
+            if (message.getType().equals(MessageType.ERROR))
+                return message;
+
+            connDB.insertLibrarian(email, name, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return new Message(null, MessageType.SUCCESS, "Librarian created.");
     }
 
@@ -82,7 +87,7 @@ public class DiLi {
         // if not null > user exists >>>> false
         // canEmailExist = false
         // If user exists, errors
-        if ((connDB.getUserInformation(email) == null) == canEmailExist)
+        if (connDB.getUserInformation(email) != null && !canEmailExist)
             return new Message("email", MessageType.ERROR, "Email is already used.");
 
         // Check if email is of type @domain
@@ -133,25 +138,38 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Info updated.");
     }
 
-    public Message updateLibrarianInfo(String name, String email, String password) throws SQLException {
-        Message message = checkUserFields(name, email, password, true);
+    public Message updateLibrarianInfo(String name, String email, String password) {
+        try {
+            Message message = checkUserFields(name, email, password, true);
 
-        if (message.getType().equals(MessageType.ERROR))
-            return message;
 
-        connDB.updateLibrarian(loggedAccount.getId(), name, email, password);
+            if (message.getType().equals(MessageType.ERROR))
+                return message;
+
+            connDB.updateLibrarian(loggedAccount.getId(), email, name, password);
+
+            loggedAccount = connDB.getUserInformation(email);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
         return new Message(null, MessageType.SUCCESS, "Info updated.");
     }
 
     public Message addBook(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
-                           Map<String, String> downloadLink, String imagePath) throws SQLException {
+                           Map<String, String> downloadLink, String imagePath) {
         Message message = checkBookFields(title, author, synopsis, language, genres, costPerDownload);
 
         if (message.getType().equals(MessageType.ERROR))
             return message;
 
-        connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+        try {
+            connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
@@ -172,15 +190,15 @@ public class DiLi {
         // An  error  message  must appear below the field (cost per download) if a non-numerical or negative value is given.
 
         // Check if fields are empty
-        if (title.isBlank())
+        if (title == null || title.isBlank())
             return new Message("title", MessageType.ERROR, "Empty field.");
-        if (author.isBlank())
+        if (author == null || author.isBlank())
             return new Message("author", MessageType.ERROR, "Empty field.");
-        if (synopsis.isBlank())
+        if (synopsis == null || synopsis.isBlank())
             return new Message("synopsis", MessageType.ERROR, "Empty field.");
-        if (language.isBlank())
+        if (language == null || language.isBlank())
             return new Message("language", MessageType.ERROR, "Empty field.");
-        if (genres.isEmpty())
+        if (genres == null || genres.isEmpty())
             return new Message("genres", MessageType.ERROR, "Empty field.");
         for (int i = 0; i < genres.size(); i++)
             if (genres.get(i).isBlank())
@@ -207,13 +225,17 @@ public class DiLi {
 
     public Message updateBookInfo(int id, String title, String author, String synopsis, String language,
                                   List<String> genres, boolean availability, double costPerDownload,
-                                  Map<String, String> downloadLink, String imagePath) throws SQLException {
+                                  Map<String, String> downloadLink, String imagePath) {
         Message message = checkBookFields(title, author, synopsis, language, genres, costPerDownload);
 
         if (message.getType().equals(MessageType.ERROR))
             return message;
 
-        connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+        try {
+            connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
@@ -376,7 +398,27 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Review deleted successfully.");
     }
 
-    public void changeBookVisibility(int idLivro){
-        //TODO: alterar visibilidade
+    public void changeBookVisibility(int idLivro) {
+        try {
+            connDB.updateBookAvailability(idLivro);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeBook(int idLivro) {
+        try {
+            connDB.deleteBook(idLivro);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Book getBookById(int idLivro) {
+        try {
+            return connDB.getBookById(idLivro, isAdmin());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -79,8 +80,15 @@ public class MainInterfaceAdminController implements Initializable {
 
     private void registerHandlers() {
         fsm.addPropertyChangeListener(DiliContext.PROP_FASE, evt -> update());
+        fsm.addPropertyChangeListener(DiliContext.PROP_BOOK, evt -> update());
+        fsm.addPropertyChangeListener(DiliContext.PROP_USER, evt -> update());
 
-        //TODO: seleção das cenas na combobox
+        tfSearch.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                update();
+            }
+        });
+
         miProfile.setOnAction(ev -> fsm.changeState(DiliState.PROFILE.createState(fsm, fsm.getData())));
         miAddBook.setOnAction(ev -> {
             FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/admin/addBook.fxml"));
@@ -121,8 +129,9 @@ public class MainInterfaceAdminController implements Initializable {
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.getScene().setUserData(fsm);
             dialog.showAndWait();
-
         });
+
+        //TODO: seleção das cenas na combobox
         miStatistics.setOnAction(ev -> System.out.println("miStatistics"));
 
         btnLogout.setOnAction(ev -> fsm.logout());
