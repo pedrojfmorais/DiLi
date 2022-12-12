@@ -159,7 +159,7 @@ public class ConnDB {
 
         String sqlQuery = "INSERT INTO book (id, title, synopsis, author, availability, costPerDownload, image_path ) VALUES (" +
                 "'" + id + "','" + title + "','" + synopsis + "','" + author + "','"
-                + availability + "','" + costPerDownload + "','" + imagePath + "')";
+                + (availability ? "1" : "0") + "','" + costPerDownload + "','" + imagePath + "')";
 
         statement.executeUpdate(sqlQuery);
         statement.close();
@@ -173,7 +173,7 @@ public class ConnDB {
 
         String sqlQuery = "INSERT INTO book ( title, synopsis, author, availability, costPerDownload, image_path ) VALUES (" +
                 "'" + title + "','" + synopsis + "','" + author + "','"
-                + availability + "','" + costPerDownload + "','" + imagePath + "')";
+                + (availability ? "1" : "0") + "','" + costPerDownload + "','" + imagePath + "')";
 
         statement.executeUpdate(sqlQuery);
         int idBook = statement.getGeneratedKeys().getInt(1);
@@ -242,10 +242,10 @@ public class ConnDB {
                 "title='%s', " +
                 "synopsis='%s', " +
                 "author='%s', " +
-                "availability='%b', " +
+                "availability='%s', " +
                 "costPerDownload='%f', " +
                 "image_path='%s' WHERE id='%s'",
-                title, synopsis, author, availability, costPerDownload, id, imagePath);
+                title, synopsis, author, (availability ? "1" : "0"), costPerDownload, id, imagePath);
         statement.executeUpdate(sqlQuery);
 
         sqlQuery = "DELETE FROM book_genre WHERE book_id='" + id + "'";
@@ -533,7 +533,7 @@ public class ConnDB {
                 " WHERE book.id = book_language.book_id AND language.id = book_language.language_id " +
                 languages;
         if(!isAdmin)
-            sqlQuery += " AND book.availability='true'";
+            sqlQuery += " AND book.availability='1'";
 
         /*StringBuilder sqlQuery = new StringBuilder("SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE " +
                 "book.id = book_genre.book_id AND " +
@@ -563,7 +563,7 @@ public class ConnDB {
 
         String sqlQuery = "SELECT * FROM book";
         if(!isAdmin)
-            sqlQuery += " WHERE availability='true'";
+            sqlQuery += " WHERE availability='1'";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
         ArrayList<Book> bookArrayList = listBooks(resultSet);
@@ -574,7 +574,6 @@ public class ConnDB {
         return bookArrayList;
     }
     public ArrayList<Book> search(String search, boolean isAdmin) throws SQLException {
-
         if(search.isBlank())
             return listAllBooks(isAdmin);
 
@@ -584,7 +583,7 @@ public class ConnDB {
                 "WHERE (title LIKE '%" + search + "%' " +
                 "OR author LIKE  '%" + search + "%')";
         if(!isAdmin)
-            sqlQuery += " AND availability='true'";
+            sqlQuery += " AND availability='1'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
         ArrayList<Book> bookArrayList = listBooks(resultSet);
@@ -601,7 +600,7 @@ public class ConnDB {
 
         String sqlQuery = "SELECT * FROM book " + "WHERE id='" + id + "'";
         if(!isAdmin)
-            sqlQuery += " AND availability='true'";
+            sqlQuery += " AND availability='1'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 

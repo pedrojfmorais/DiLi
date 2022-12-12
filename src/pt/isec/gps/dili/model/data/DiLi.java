@@ -239,7 +239,7 @@ public class DiLi {
         return new Message(null, MessageType.SUCCESS, "Book entry created.");
     }
 
-    private boolean isAdmin() {
+    public boolean isAdmin() {
         if (loggedAccount != null)
             return loggedAccount.getTypeUser() == UserType.LIBRARIAN;
         return false;

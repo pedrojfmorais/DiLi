@@ -6,5 +6,6 @@
    <children>
       <fx:include fx:id="login" source="login.fxml" />
       <fx:include fx:id="adminInterface" source="mainInterface/admin/mainInterfaceAdmin.fxml" />
+      <fx:include fx:id="userInterface" source="mainInterface/user/mainInterfaceUser.fxml" />
    </children>
 </StackPane>

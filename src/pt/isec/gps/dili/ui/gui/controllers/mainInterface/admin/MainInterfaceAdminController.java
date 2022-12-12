@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.DiLi;
+import pt.isec.gps.dili.model.data.user.UserType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.controllers.mainInterface.ProfileController;
@@ -68,14 +69,6 @@ public class MainInterfaceAdminController implements Initializable {
 
     private void createViews() throws IOException {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
-
-//        FXMLLoader loaderScrollPaneBookItems = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
-//        FXMLLoader loaderProfile = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/profile.fxml"));
-//        try {
-//            paneItems.getChildren().addAll((Node) loaderScrollPaneBookItems.load(), (Node) loaderProfile.load());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     private void registerHandlers() {
@@ -142,6 +135,7 @@ public class MainInterfaceAdminController implements Initializable {
                         fsm.getState() == DiliState.MAIN_INTERFACE
                                 || fsm.getState() == DiliState.PROFILE
                 )
+                && DiLi.getLoggedAccount() != null && DiLi.getLoggedAccount().getTypeUser() == UserType.LIBRARIAN
         );
 
         if (DiLi.getLoggedAccount() != null)

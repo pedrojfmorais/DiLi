@@ -6,10 +6,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.data.user.UserType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.ScrollPaneBookItemAdminController;
+import pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.ScrollPaneBookItemUserController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -56,22 +59,42 @@ public class ScrollPaneBookItemsController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        System.out.println(books.size());
+
         for (var oneBook : books) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/admin/scrollPaneBookItemAdmin.fxml"));
+            if(DiLi.getLoggedAccount().getTypeUser() == UserType.LIBRARIAN) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/admin/scrollPaneBookItemAdmin.fxml"));
 
-            Node node;
-            try {
-                node = loader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                Node node;
+                try {
+                    node = loader.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                ScrollPaneBookItemAdminController spbiac = loader.getController();
+                spbiac.initData(oneBook);
+
+                node.minWidth(scrollPaneBookItems.getWidth());
+
+                vBoxItems.getChildren().add(node);
+            } else {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/user/scrollPaneBookItemUser.fxml"));
+
+                Node node;
+                try {
+                    node = loader.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                ScrollPaneBookItemUserController spbiuc = loader.getController();
+                spbiuc.initData(oneBook);
+
+                node.minWidth(scrollPaneBookItems.getWidth());
+
+                vBoxItems.getChildren().add(node);
             }
-
-            ScrollPaneBookItemAdminController mibiad = loader.getController();
-            mibiad.initData(oneBook);
-
-            node.minWidth(scrollPaneBookItems.getWidth());
-
-            vBoxItems.getChildren().add(node);
         }
         scrollPaneBookItems.setContent(vBoxItems);
     }

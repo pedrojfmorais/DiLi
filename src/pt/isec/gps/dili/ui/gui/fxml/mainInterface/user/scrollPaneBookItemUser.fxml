@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="bookInterfaceAdmin" prefHeight="105.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.ScrollPaneBookItemAdminController">
+<BorderPane fx:id="bookInterfaceAdmin" prefHeight="105.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.ScrollPaneBookItemUserController">
    <center>
       <HBox alignment="CENTER" prefHeight="202.0" prefWidth="532.0" BorderPane.alignment="CENTER">
          <children>
@@ -30,9 +30,6 @@
             <HBox alignment="CENTER" prefHeight="202.0" prefWidth="248.0" spacing="10.0">
                <children>
                   <Button fx:id="btnInfo" mnemonicParsing="false" text="+ INFO" />
-                  <Button fx:id="btnVisible" mnemonicParsing="false" />
-                  <Button fx:id="btnEdit" mnemonicParsing="false" />
-                  <Button fx:id="btnDelete" mnemonicParsing="false" />
                </children>
             </HBox>
          </children></HBox>

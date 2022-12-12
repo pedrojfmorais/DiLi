@@ -15,6 +15,8 @@ public class StackPaneWindowController implements Initializable {
     private BorderPane login;
     @FXML
     private BorderPane adminInterface;
+    @FXML
+    private BorderPane userInterface;
     private DiliContext fsm;
     @FXML
     private StackPane stackPane;
