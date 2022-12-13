@@ -11,10 +11,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.DiLi;
+import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.data.user.UserType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
@@ -31,6 +33,7 @@ import java.util.ResourceBundle;
 
 public class MainInterfaceUserController implements Initializable {
 
+    public VBox vBoxLeft;
     @FXML
     private VBox vBoxFiltersLanguage;
     @FXML
@@ -73,18 +76,6 @@ public class MainInterfaceUserController implements Initializable {
 
     private void createViews() throws IOException {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
-
-        for(var genre : fsm.getData().getAllFiltersGenres()) {
-            vBoxFiltersGenre.getChildren().add(new CheckBox(genre));
-        }
-
-        for(var language : fsm.getData().getAllFiltersLanguages()) {
-            vBoxFiltersLanguage.getChildren().add(new CheckBox(language));
-        }
-
-        for(var format : fsm.getData().getAllFiltersFormats()) {
-            vBoxFiltersBookFormats.getChildren().add(new CheckBox(format));
-        }
     }
 
     private void registerHandlers() {
@@ -94,6 +85,10 @@ public class MainInterfaceUserController implements Initializable {
 
         tfSearch.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
+
+                if (fsm.getState() != DiliState.MAIN_INTERFACE)
+                    fsm.changeState(DiliState.MAIN_INTERFACE.createState(fsm, fsm.getData()));
+
                 if (paneItems.getChildren().size() > 0)
                     paneItems.getChildren().remove(0);
 
@@ -116,45 +111,45 @@ public class MainInterfaceUserController implements Initializable {
         });
 
         btnLogout.setOnAction(ev -> fsm.logout());
-
-        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
-            CheckBox cb = (CheckBox) checkbox;
-            cb.selectedProperty().addListener(change -> updateByFilters());
-        }
-
-        for(Node checkbox : vBoxFiltersGenre.getChildren()){
-            CheckBox cb = (CheckBox) checkbox;
-            cb.selectedProperty().addListener(change -> updateByFilters());
-        }
-
-        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
-            CheckBox cb = (CheckBox) checkbox;
-            cb.selectedProperty().addListener(change -> updateByFilters());
-        }
     }
 
     private void updateByFilters() {
+
+        if (fsm.getState() != DiliState.MAIN_INTERFACE)
+            fsm.changeState(DiliState.MAIN_INTERFACE.createState(fsm, fsm.getData()));
+
         List<String> languageFilters = new ArrayList<>();
         List<String> genreFilters = new ArrayList<>();
         List<String> bookFormatsFilters = new ArrayList<>();
 
-        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
+        for (Node checkbox : vBoxFiltersLanguage.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
-            if(cb.isSelected())
+            if (cb.isSelected())
                 languageFilters.add(cb.getText());
         }
 
-        for(Node checkbox : vBoxFiltersGenre.getChildren()){
+        for (Node checkbox : vBoxFiltersGenre.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
-            if(cb.isSelected())
+            if (cb.isSelected())
                 genreFilters.add(cb.getText());
         }
 
-        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
+        for (Node checkbox : vBoxFiltersBookFormats.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
-            if(cb.isSelected())
+            if (cb.isSelected())
                 bookFormatsFilters.add(cb.getText());
         }
+
+        ArrayList<Book> livros;
+
+        if (!genreFilters.isEmpty() || !languageFilters.isEmpty() || !bookFormatsFilters.isEmpty()) {
+            tfSearch.setText("");
+            livros = fsm.getData().listByFilters(genreFilters, languageFilters, bookFormatsFilters);
+        } else if (tfSearch.getText().isEmpty())
+            livros = fsm.getData().search("");
+        else
+            return;
+
 
         if (paneItems.getChildren().size() > 0)
             paneItems.getChildren().remove(0);
@@ -172,25 +167,22 @@ public class MainInterfaceUserController implements Initializable {
 
         paneItems.getChildren().add(node);
 
-        if(!genreFilters.isEmpty() || !languageFilters.isEmpty() || !bookFormatsFilters.isEmpty())
-            spbic.initData(fsm.getData().listByFilters(genreFilters, languageFilters, bookFormatsFilters));
-        else
-            spbic.initData(fsm.getData().search(""));
+        spbic.initData(livros);
 
     }
 
-    private void clearFilters(){
-        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
+    private void clearFilters() {
+        for (Node checkbox : vBoxFiltersLanguage.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
             cb.setSelected(false);
         }
 
-        for(Node checkbox : vBoxFiltersGenre.getChildren()){
+        for (Node checkbox : vBoxFiltersGenre.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
             cb.setSelected(false);
         }
 
-        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
+        for (Node checkbox : vBoxFiltersBookFormats.getChildren()) {
             CheckBox cb = (CheckBox) checkbox;
             cb.setSelected(false);
         }
@@ -200,7 +192,7 @@ public class MainInterfaceUserController implements Initializable {
         borderPane.setVisible(fsm != null &&
                 (fsm.getState() == DiliState.MAIN_INTERFACE || fsm.getState() == DiliState.BOOK_INFO)
 
-            && DiLi.getLoggedAccount() != null && DiLi.getLoggedAccount().getTypeUser() == UserType.STUDENT_TEACHER);
+                && DiLi.getLoggedAccount() != null && DiLi.getLoggedAccount().getTypeUser() == UserType.STUDENT_TEACHER);
 
         if (DiLi.getLoggedAccount() != null)
             lbUsername.setText(DiLi.getLoggedAccount().getName());
@@ -208,6 +200,64 @@ public class MainInterfaceUserController implements Initializable {
         if (fsm.getState() == DiliState.MAIN_INTERFACE) {
             idLivroInfo = 0;
 
+            vBoxLeft.getChildren().clear();
+            vBoxFiltersGenre = new VBox();
+            vBoxFiltersLanguage = new VBox();
+            vBoxFiltersBookFormats = new VBox();
+
+            Accordion accordion = new Accordion();
+            TitledPane tpLanguage = new TitledPane();
+            TitledPane tpGenre = new TitledPane();
+            TitledPane tpBookFormats = new TitledPane();
+
+            tpLanguage.setText("Language");
+            tpGenre.setText("Genre");
+            tpBookFormats.setText("Book Format");
+
+            vBoxFiltersGenre.setSpacing(10);
+            vBoxFiltersGenre.setPrefWidth(100);
+
+            for (var genre : fsm.getData().getAllFiltersGenres()) {
+                vBoxFiltersGenre.getChildren().add(new CheckBox(genre));
+            }
+
+            vBoxFiltersLanguage.setSpacing(10);
+            vBoxFiltersLanguage.setPrefWidth(100);
+            for (var language : fsm.getData().getAllFiltersLanguages()) {
+                vBoxFiltersLanguage.getChildren().add(new CheckBox(language));
+            }
+
+            vBoxFiltersBookFormats.setSpacing(10);
+            vBoxFiltersBookFormats.setPrefWidth(100);
+            for (var format : fsm.getData().getAllFiltersFormats()) {
+                vBoxFiltersBookFormats.getChildren().add(new CheckBox(format));
+            }
+
+            tpLanguage.setContent(vBoxFiltersLanguage);
+            tpGenre.setContent(vBoxFiltersGenre);
+            tpBookFormats.setContent(vBoxFiltersBookFormats);
+
+            accordion.getPanes().addAll(tpLanguage, tpGenre, tpBookFormats);
+
+            Label lbFilters = new Label("Filters:");
+            lbFilters.setFont(new Font(14));
+
+            vBoxLeft.getChildren().addAll(lbFilters, accordion);
+
+            for (Node checkbox : vBoxFiltersLanguage.getChildren()) {
+                CheckBox cb = (CheckBox) checkbox;
+                cb.selectedProperty().addListener(change -> updateByFilters());
+            }
+
+            for (Node checkbox : vBoxFiltersGenre.getChildren()) {
+                CheckBox cb = (CheckBox) checkbox;
+                cb.selectedProperty().addListener(change -> updateByFilters());
+            }
+
+            for (Node checkbox : vBoxFiltersBookFormats.getChildren()) {
+                CheckBox cb = (CheckBox) checkbox;
+                cb.selectedProperty().addListener(change -> updateByFilters());
+            }
             clearFilters();
             updateByFilters();
         }

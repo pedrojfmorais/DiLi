@@ -377,23 +377,32 @@ public class DiLi {
         return result;
 
     }
-    public HashMap<String, Integer> statisticAllDownloadedBooks() throws SQLException {
+
+    public HashMap<String, Integer> statisticAllDownloadedBooks() {
 
 
         HashMap<String, Integer> result = new HashMap<>();
 
-        ResultSet resultSet = connDB.getStatisticAllDownloadedBooks();
+        ResultSet resultSet = null;
+        try {
+            resultSet = connDB.getStatisticAllDownloadedBooks();
 
-        while (resultSet.next()) {
 
-            result.put(resultSet.getString(1), resultSet.getInt(2));
+            while (resultSet.next()) {
 
+                result.put(resultSet.getString(1), resultSet.getInt(2));
+
+            }
+
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        resultSet.close();
         return result;
 
     }
+
     public HashMap<String, Integer> statisticMostDownloadedBooks(int limit) throws SQLException {
 
 
@@ -487,21 +496,24 @@ public class DiLi {
             throw new RuntimeException(e);
         }
     }
-    public List<String> getAllFiltersGenres(){
+
+    public List<String> getAllFiltersGenres() {
         try {
             return connDB.getAllFiltersGenres();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public List<String> getAllFiltersLanguages(){
+
+    public List<String> getAllFiltersLanguages() {
         try {
             return connDB.getAllFiltersLanguages();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public List<String> getAllFiltersFormats(){
+
+    public List<String> getAllFiltersFormats() {
         try {
             return connDB.getAllFiltersFormats();
         } catch (SQLException e) {
@@ -509,7 +521,7 @@ public class DiLi {
         }
     }
 
-    public int getBookDownloadCounter(int bookId){
+    public int getBookDownloadCounter(int bookId) {
         try {
             return connDB.getBookDownloadCounter(bookId);
         } catch (SQLException e) {
@@ -525,7 +537,7 @@ public class DiLi {
         }
     }
 
-    public double getRating(int bookId){
+    public double getRating(int bookId) {
         try {
             return connDB.getRating(bookId);
         } catch (SQLException e) {

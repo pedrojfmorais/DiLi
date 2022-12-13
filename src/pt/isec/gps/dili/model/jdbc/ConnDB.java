@@ -442,10 +442,7 @@ public class ConnDB {
 
         Statement statement = dbConn.createStatement();
         String sqlQuery = "SELECT format, COUNT(*) FROM book_download GROUP BY format";
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
-        statement.close();
-        resultSet.close();
-        return resultSet;
+        return statement.executeQuery(sqlQuery);
     }
 
     public ResultSet getStatisticAllDownloadedBooks() throws SQLException {
@@ -454,10 +451,7 @@ public class ConnDB {
         String sqlQuery = "SELECT book.title, COUNT(*) FROM book, book_download WHERE book.id=book_id " +
                 "GROUP BY book_download.book_id " +
                 "ORDER BY 2 DESC";
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
-        statement.close();
-        resultSet.close();
-        return resultSet;
+        return statement.executeQuery(sqlQuery);
     }
     public ResultSet getStatisticMostDownloadedBooks(int limit) throws SQLException {
 
@@ -465,10 +459,7 @@ public class ConnDB {
         String sqlQuery = "SELECT book.title, COUNT(*) FROM book, book_download WHERE book.id=book_id " +
                 "GROUP BY book_download.book_id " +
                 "ORDER BY 2 DESC LIMIT " + limit;
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
-        statement.close();
-        resultSet.close();
-        return resultSet;
+        return statement.executeQuery(sqlQuery);
     }
     public ResultSet getStatisticCostPerEachBook(int limit, String order) throws SQLException {
 
@@ -482,10 +473,7 @@ public class ConnDB {
             sqlQuery += "LIMIT " + limit;
         }
 
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
-        statement.close();
-        resultSet.close();
-        return resultSet;
+        return statement.executeQuery(sqlQuery);
     }
 
     private Book prepareBook(ResultSet resultSet) throws SQLException {
