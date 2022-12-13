@@ -245,7 +245,7 @@ public class ConnDB {
                 "availability='%s', " +
                 "costPerDownload='%f', " +
                 "image_path='%s' WHERE id='%s'",
-                title, synopsis, author, (availability ? "1" : "0"), costPerDownload, id, imagePath);
+                title, synopsis, author, (availability ? "1" : "0"), costPerDownload, imagePath, id);
         statement.executeUpdate(sqlQuery);
 
         sqlQuery = "DELETE FROM book_genre WHERE book_id='" + id + "'";
@@ -302,7 +302,15 @@ public class ConnDB {
     }
     public void deleteBook(int id) throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "DELETE FROM book WHERE id='" + id + "'";
+        String sqlQuery = "DELETE FROM book_download WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        sqlQuery = "DELETE FROM book_file WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        sqlQuery = "DELETE FROM book_genre WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        sqlQuery = "DELETE FROM book_language WHERE book_id='" + id + "'";
+        statement.executeUpdate(sqlQuery);
+        sqlQuery = "DELETE FROM book WHERE id='" + id + "'";
         statement.executeUpdate(sqlQuery);
         statement.close();
     }
@@ -559,7 +567,7 @@ public class ConnDB {
     }
     public List<String> getAllFiltersGenres() throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "SELECT name FROM genre, book_genre WHERE genre.id = book_genre.genre_id";
+        String sqlQuery = "SELECT DISTINCT name FROM genre, book_genre WHERE genre.id = book_genre.genre_id";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
 
@@ -576,7 +584,7 @@ public class ConnDB {
     }
     public List<String> getAllFiltersLanguages() throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "SELECT name FROM language, book_language WHERE language.id = book_language.language_id";
+        String sqlQuery = "SELECT DISTINCT name FROM language, book_language WHERE language.id = book_language.language_id";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
 
@@ -593,7 +601,7 @@ public class ConnDB {
     }
     public List<String> getAllFiltersFormats() throws SQLException {
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "SELECT name FROM format";
+        String sqlQuery = "SELECT DISTINCT name FROM format";
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
 
