@@ -35,21 +35,19 @@ public class BookInfoState extends DiliAdapter {
     }
     @Override
     public Message createLibrarian(String name, String email, String password) {
-        if (!data.isAdmin())
-            return null;
-        return data.createLibrarian(name, email, password);
+        return new MainInterfaceAdminState(context, data).createLibrarian(name, email, password);
     }
 
     @Override
     public Message addBook(String title, String author, String synopsis, String language,
                            List<String> genres, boolean availability, double costPerDownload,
                            Map<String, String> downloadLink, String imagePath) {
-        if (!data.isAdmin())
-            return null;
-        return data.addBook(title, author, synopsis, language, genres, availability,
-                costPerDownload, downloadLink, imagePath);
+
+        return new MainInterfaceAdminState(context, data).addBook(title, author, synopsis, language, genres,
+                availability, costPerDownload, downloadLink, imagePath);
 
     }
+
     @Override
     public DiliState getState() {
         return DiliState.BOOK_INFO;
