@@ -1,6 +1,7 @@
 package pt.isec.gps.dili.model.data;
 
 import pt.isec.gps.dili.model.data.book.Book;
+import pt.isec.gps.dili.model.data.book.BookPrice;
 import pt.isec.gps.dili.model.data.book.Review;
 import pt.isec.gps.dili.model.data.user.User;
 import pt.isec.gps.dili.model.data.user.UserType;
@@ -339,6 +340,23 @@ public class DiLi {
 
         }
         return result;
+    }
+
+    public List<BookPrice> statisticCostPerEachBook(int limit, String order) throws SQLException {
+
+
+        List<BookPrice> bp = new ArrayList<>();
+
+        ResultSet resultSet = connDB.getStatisticCostPerEachBook(limit, order);
+
+        while (resultSet.next()) {
+
+            bp.add(new BookPrice(resultSet.getString(1), resultSet.getDouble(2)));
+
+        }
+
+        resultSet.close();
+        return bp;
     }
 
 

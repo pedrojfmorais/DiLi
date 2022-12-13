@@ -470,6 +470,23 @@ public class ConnDB {
         resultSet.close();
         return resultSet;
     }
+    public ResultSet getStatisticCostPerEachBook(int limit, String order) throws SQLException {
+
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT book.title, (book.costPerDownload * COUNT(book_download.book_id)) AS 'cost' " +
+                "FROM book, book_download " +
+                "WHERE book.id = book_download.book_id " +
+                "GROUP BY id " +
+                "ORDER BY 2 " + order + " ";
+        if(limit != -1) {
+            sqlQuery += "LIMIT " + limit;
+        }
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        statement.close();
+        resultSet.close();
+        return resultSet;
+    }
 
     private Book prepareBook(ResultSet resultSet) throws SQLException {
 
