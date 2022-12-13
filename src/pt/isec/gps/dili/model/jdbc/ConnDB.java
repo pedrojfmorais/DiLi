@@ -717,7 +717,7 @@ public class ConnDB {
         Review review = null;
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "SELECT * FROM rating_review " + "WHERE id='" + id + "'";
+        String sqlQuery = "SELECT * FROM rating_review WHERE id='" + id + "'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
@@ -736,7 +736,7 @@ public class ConnDB {
     public float getRating(int bookId) throws SQLException {
         Statement statement = dbConn.createStatement();
 
-        String sqlQuery = "SELECT AVG(rating) FROM rating_review " + "WHERE id='" + bookId + "'";
+        String sqlQuery = "SELECT AVG(rating) FROM rating_review WHERE book_id='" + bookId + "'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
         resultSet.close();
@@ -746,6 +746,21 @@ public class ConnDB {
         }
         return 0;
 
+    }
+
+    public int getReviewCounter(int bookId) throws SQLException {
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT COUNT(*) FROM rating_review WHERE book_id='" + bookId +"'";
+
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        resultSet.close();
+        statement.close();
+        if(resultSet.next()) {
+            return resultSet.getInt(1);
+        }
+        return 0;
     }
 
 }
