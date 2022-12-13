@@ -298,15 +298,20 @@ public class DiLi {
      * Copyright costs and statistics
      */
 
-    public double copyrightAllBooks() throws SQLException {
+    public double copyrightAllBooks() {
 
-        ArrayList<Book> books = connDB.listAllBooks(isAdmin());
-
+        ArrayList<Book> books;
         double total = 0;
-        for (Book book : books) {
-            total += connDB.getBookDownloadCounter(book.getId()) * book.getCostPerDownload();
-        }
+        try {
+            books = connDB.listAllBooks(isAdmin());
 
+
+            for (Book book : books) {
+                total += connDB.getBookDownloadCounter(book.getId()) * book.getCostPerDownload();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return total;
 
     }

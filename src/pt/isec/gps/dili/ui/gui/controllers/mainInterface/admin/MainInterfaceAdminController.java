@@ -377,7 +377,31 @@ public class MainInterfaceAdminController implements Initializable {
             tbtnMostDownloadedBooks.setToggleGroup(tgStatistics);
             tbtnDigitalBookFormats.setToggleGroup(tgStatistics);
 
-            vBoxLeft.getChildren().addAll(tbtnBooksDownloads, tbtnMostDownloadedBooks, tbtnStatisticCostPerEachBook, tbtnDigitalBookFormats);
+            Button btnAllCopyright = new Button("Calculate Copyright Owed");
+            btnAllCopyright.setOnAction(ev -> {
+                Alert alert = new Alert(
+                        Alert.AlertType.WARNING,
+                        "",
+                        ButtonType.OK
+                );
+                alert.setTitle("Calculate Copyright All Books");
+                alert.setHeaderText("Library owes: ");
+
+                double value = fsm.getData().copyrightAllBooks();
+
+                if(value > 0.0) {
+                    alert.setContentText(value + "€");
+                    alert.setAlertType(Alert.AlertType.WARNING);
+                }else{
+                    alert.setContentText("All copyright is paid");
+                    alert.setAlertType(Alert.AlertType.INFORMATION);
+                }
+
+                alert.showAndWait();
+            });
+
+            vBoxLeft.getChildren().addAll(tbtnBooksDownloads, tbtnMostDownloadedBooks, tbtnStatisticCostPerEachBook,
+                    tbtnDigitalBookFormats, btnAllCopyright);
 
             tbtnBooksDownloads.setSelected(true);
 
