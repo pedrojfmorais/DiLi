@@ -733,5 +733,19 @@ public class ConnDB {
 
         return review;
     }
+    public float getRating(int bookId) throws SQLException {
+        Statement statement = dbConn.createStatement();
+
+        String sqlQuery = "SELECT AVG(rating) FROM rating_review " + "WHERE id='" + bookId + "'";
+
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        resultSet.close();
+        statement.close();
+        if(resultSet.next()) {
+            return resultSet.getLong(1);
+        }
+        return 0;
+
+    }
 
 }
