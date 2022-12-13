@@ -49,7 +49,7 @@ public class StackPaneWindowController implements Initializable {
                 width = login.getWidth();
                 height = login.getHeight();
             }
-            case MAIN_INTERFACE, PROFILE -> {
+            case MAIN_INTERFACE, PROFILE, BOOK_INFO -> {
                 width = adminInterface.getWidth();
                 height = adminInterface.getHeight();
             }
@@ -65,6 +65,7 @@ public class StackPaneWindowController implements Initializable {
             case LOGIN -> titulo = "DiLi - Login";
             case MAIN_INTERFACE -> titulo = "DiLi";
             case PROFILE -> titulo = "DiLi - Profile";
+            case BOOK_INFO -> titulo = "DiLi - Book Info";
             default -> titulo = "";
         }
         stage.setTitle(titulo);

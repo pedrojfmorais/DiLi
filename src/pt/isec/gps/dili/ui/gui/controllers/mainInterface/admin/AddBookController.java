@@ -50,6 +50,8 @@ public class AddBookController implements Initializable {
 
     public void initData(Book livro) {
 
+        idLivro = livro.getId();
+
         tfTitle.setText(livro.getTitle());
         tfAuthor.setText(livro.getAuthor());
         tfLanguage.setText(livro.getLanguage());

@@ -18,16 +18,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ScrollPaneBookItemsController implements Initializable {
     private DiliContext fsm;
     @FXML
     private ScrollPane scrollPaneBookItems;
-    private String filtro = "";
+    private List<Book> livros = new ArrayList<>();
 
-    public void initData(String filtro) {
-        this.filtro = filtro;
+    public void initData(List<Book> livros) {
+        this.livros = livros;
 
         try {
             createViews();
@@ -52,16 +53,8 @@ public class ScrollPaneBookItemsController implements Initializable {
         scrollPaneBookItems.setFitToHeight(true);
 
         VBox vBoxItems = new VBox();
-        ArrayList<Book> books;
-        try {
-            books = fsm.getData().search(filtro);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        System.out.println(books.size());
-
-        for (var oneBook : books) {
+        for (var oneBook : livros) {
             if(DiLi.getLoggedAccount().getTypeUser() == UserType.LIBRARIAN) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../../fxml/mainInterface/admin/scrollPaneBookItemAdmin.fxml"));
 

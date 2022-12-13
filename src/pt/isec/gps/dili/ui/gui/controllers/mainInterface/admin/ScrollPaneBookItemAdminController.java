@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
+import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
 import java.io.IOException;
@@ -93,7 +94,10 @@ public class ScrollPaneBookItemAdminController extends Node implements Initializ
             abc.initData(livro);
         });
 
-        //TODO: butão +info
+        btnInfo.setOnAction(ev -> {
+            MainInterfaceAdminController.setIdLivroInfo(livro.getId());
+            fsm.changeState(DiliState.BOOK_INFO.createState(fsm, fsm.getData()));
+        });
     }
 
     private void update() {

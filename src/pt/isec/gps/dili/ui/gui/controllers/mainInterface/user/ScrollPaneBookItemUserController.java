@@ -15,7 +15,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
+import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.AddBookController;
+import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.MainInterfaceAdminController;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
 import java.io.IOException;
@@ -58,7 +60,10 @@ public class ScrollPaneBookItemUserController extends Node implements Initializa
     private void registerHandlers() {
         fsm.addPropertyChangeListener(DiliContext.PROP_BOOK, evt -> update());
 
-        //TODO: butão +info
+        btnInfo.setOnAction(ev -> {
+            MainInterfaceUserController.setIdLivroInfo(livro.getId());
+            fsm.changeState(DiliState.BOOK_INFO.createState(fsm, fsm.getData()));
+        });
     }
 
     private void update() {

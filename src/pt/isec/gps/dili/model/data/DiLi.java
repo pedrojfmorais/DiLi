@@ -245,8 +245,12 @@ public class DiLi {
         return false;
     }
 
-    public ArrayList<Book> search(String search) throws SQLException {
-        return connDB.search(search, isAdmin());
+    public ArrayList<Book> search(String search) {
+        try {
+            return connDB.search(search, isAdmin());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Message downloadBook(Book book, String format) throws SQLException {
@@ -276,9 +280,14 @@ public class DiLi {
         return new ArrayList<>();
     }
 
-    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) throws SQLException {
-        if (filtersGenre != null && filtersLanguage != null && filtersFormat != null)
-            return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin());
+    public ArrayList<Book> listByFilters(List<String> filtersGenre, List<String> filtersLanguage, List<String> filtersFormat) {
+        if (filtersGenre != null && filtersLanguage != null && filtersFormat != null) {
+            try {
+                return connDB.listByFilters(filtersGenre, filtersLanguage, filtersFormat, isAdmin());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return new ArrayList<>();
     }
     /*
@@ -301,12 +310,17 @@ public class DiLi {
 
     }
 
-    public double copyrightBook(Book book) throws SQLException {
+    public double copyrightBook(Book book) {
 
         if (book == null)
             return 0;
 
-        int copies = connDB.getBookDownloadCounter(book.getId());
+        int copies = 0;
+        try {
+            copies = connDB.getBookDownloadCounter(book.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         return copies * book.getCostPerDownload();
 
@@ -341,7 +355,6 @@ public class DiLi {
         }
 
         resultSet.close();
-        System.out.println(result);
         return result;
 
     }
@@ -417,6 +430,51 @@ public class DiLi {
     public Book getBookById(int idLivro) {
         try {
             return connDB.getBookById(idLivro, isAdmin());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<String> getAllFiltersGenres(){
+        try {
+            return connDB.getAllFiltersGenres();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<String> getAllFiltersLanguages(){
+        try {
+            return connDB.getAllFiltersLanguages();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public List<String> getAllFiltersFormats(){
+        try {
+            return connDB.getAllFiltersFormats();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getBookDownloadCounter(int bookId){
+        try {
+            return connDB.getBookDownloadCounter(bookId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getReviewCounter(int bookId) {
+        try {
+            return connDB.getReviewCounter(bookId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public double getRating(int bookId){
+        try {
+            return connDB.getRating(bookId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

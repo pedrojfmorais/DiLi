@@ -37,7 +37,7 @@ public class MainJFX extends Application {
         scene.setRoot(loader.load());
 
         stage.setScene(scene);
-        stage.setTitle("DiLi");
+        stage.setTitle("DiLi - Login");
         stage.getIcons().add(ImageManager.getImage("logo.png"));
         stage.show();
     }

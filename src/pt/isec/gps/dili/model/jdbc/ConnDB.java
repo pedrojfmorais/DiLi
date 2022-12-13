@@ -534,7 +534,7 @@ public class ConnDB {
         String genres = prepareQueryList(filtersGenre, "genre.name");
         String languages = prepareQueryList(filtersLanguage, "language.name");
         String formats = prepareQueryList(filtersFormat, "format.name");
-        String sqlQuery = "SELECT DISTINCT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, language, book_language " +
+        String sqlQuery = "SELECT DISTINCT book.id as id, title, synopsis, author, availability, costPerDownload, image_path FROM book, language, book_language " +
                 " INNER JOIN genre, book_genre ON book.id = book_genre.book_id AND genre.id = book_genre.genre_id " +
                 genres +
                 " INNER JOIN format, book_file ON book.id = book_file.book_id AND format.id = book_file.format_id " +
@@ -733,17 +733,17 @@ public class ConnDB {
 
         return review;
     }
-    public float getRating(int bookId) throws SQLException {
+    public double getRating(int bookId) throws SQLException {
         Statement statement = dbConn.createStatement();
 
         String sqlQuery = "SELECT AVG(rating) FROM rating_review WHERE book_id='" + bookId + "'";
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
+        if(resultSet.next()) {
+            return resultSet.getDouble(1);
+        }
         resultSet.close();
         statement.close();
-        if(resultSet.next()) {
-            return resultSet.getLong(1);
-        }
         return 0;
 
     }
@@ -755,11 +755,11 @@ public class ConnDB {
 
 
         ResultSet resultSet = statement.executeQuery(sqlQuery);
-        resultSet.close();
-        statement.close();
         if(resultSet.next()) {
             return resultSet.getInt(1);
         }
+        resultSet.close();
+        statement.close();
         return 0;
     }
 

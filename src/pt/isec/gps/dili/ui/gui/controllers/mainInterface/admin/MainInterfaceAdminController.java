@@ -18,15 +18,22 @@ import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.user.UserType;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
-import pt.isec.gps.dili.ui.gui.controllers.mainInterface.ProfileController;
 import pt.isec.gps.dili.ui.gui.controllers.mainInterface.ScrollPaneBookItemsController;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainInterfaceAdminController implements Initializable {
+    @FXML
+    private VBox vBoxFiltersLanguage;
+    @FXML
+    private VBox vBoxFiltersGenre;
+    @FXML
+    private VBox vBoxFiltersBookFormats;
     @FXML
     private MenuItem miProfile;
     @FXML
@@ -37,8 +44,6 @@ public class MainInterfaceAdminController implements Initializable {
     private MenuItem miStatistics;
     @FXML
     private Pane paneItems;
-    @FXML
-    private VBox vboxFilters;
     private DiliContext fsm;
     @FXML
     private BorderPane borderPane;
@@ -52,6 +57,12 @@ public class MainInterfaceAdminController implements Initializable {
     private Button btnLogout;
     @FXML
     private MenuButton mbManage;
+
+    private static int idLivroInfo = 0;
+
+    public static void setIdLivroInfo(int idLivroInfo) {
+        MainInterfaceAdminController.idLivroInfo = idLivroInfo;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -69,6 +80,18 @@ public class MainInterfaceAdminController implements Initializable {
 
     private void createViews() throws IOException {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
+
+        for(var genre : fsm.getData().getAllFiltersGenres()) {
+            vBoxFiltersGenre.getChildren().add(new CheckBox(genre));
+        }
+
+        for(var language : fsm.getData().getAllFiltersLanguages()) {
+            vBoxFiltersLanguage.getChildren().add(new CheckBox(language));
+        }
+
+        for(var format : fsm.getData().getAllFiltersFormats()) {
+            vBoxFiltersBookFormats.getChildren().add(new CheckBox(format));
+        }
     }
 
     private void registerHandlers() {
@@ -78,7 +101,24 @@ public class MainInterfaceAdminController implements Initializable {
 
         tfSearch.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                update();
+                if (paneItems.getChildren().size() > 0)
+                    paneItems.getChildren().remove(0);
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+
+                Node node;
+                try {
+                    node = loader.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                ScrollPaneBookItemsController spbic = loader.getController();
+
+                paneItems.getChildren().add(node);
+                spbic.initData(fsm.getData().search(tfSearch.getText()));
+
+                clearFilters();
             }
         });
 
@@ -124,16 +164,95 @@ public class MainInterfaceAdminController implements Initializable {
             dialog.showAndWait();
         });
 
-        //TODO: seleção das cenas na combobox
+        //TODO: statistics
         miStatistics.setOnAction(ev -> System.out.println("miStatistics"));
 
         btnLogout.setOnAction(ev -> fsm.logout());
+
+        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.selectedProperty().addListener(change -> updateByFilters());
+        }
+
+        for(Node checkbox : vBoxFiltersGenre.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.selectedProperty().addListener(change -> updateByFilters());
+        }
+
+        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.selectedProperty().addListener(change -> updateByFilters());
+        }
+    }
+
+    private void updateByFilters() {
+        List<String> languageFilters = new ArrayList<>();
+        List<String> genreFilters = new ArrayList<>();
+        List<String> bookFormatsFilters = new ArrayList<>();
+
+        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            if(cb.isSelected())
+                languageFilters.add(cb.getText());
+        }
+
+        for(Node checkbox : vBoxFiltersGenre.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            if(cb.isSelected())
+                genreFilters.add(cb.getText());
+        }
+
+        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            if(cb.isSelected())
+                bookFormatsFilters.add(cb.getText());
+        }
+
+        if (paneItems.getChildren().size() > 0)
+            paneItems.getChildren().remove(0);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+
+        Node node;
+        try {
+            node = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ScrollPaneBookItemsController spbic = loader.getController();
+
+        paneItems.getChildren().add(node);
+
+        if(!genreFilters.isEmpty() || !languageFilters.isEmpty() || !bookFormatsFilters.isEmpty())
+            spbic.initData(fsm.getData().listByFilters(genreFilters, languageFilters, bookFormatsFilters));
+        else
+            spbic.initData(fsm.getData().search(""));
+
+    }
+
+    private void clearFilters(){
+        for(Node checkbox : vBoxFiltersLanguage.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.setSelected(false);
+        }
+
+        for(Node checkbox : vBoxFiltersGenre.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.setSelected(false);
+        }
+
+        for(Node checkbox : vBoxFiltersBookFormats.getChildren()){
+            CheckBox cb = (CheckBox) checkbox;
+            cb.setSelected(false);
+        }
     }
 
     private void update() {
         borderPane.setVisible(fsm != null && (
                         fsm.getState() == DiliState.MAIN_INTERFACE
                                 || fsm.getState() == DiliState.PROFILE
+                                || fsm.getState() == DiliState.BOOK_INFO
                 )
                 && DiLi.getLoggedAccount() != null && DiLi.getLoggedAccount().getTypeUser() == UserType.LIBRARIAN
         );
@@ -142,23 +261,12 @@ public class MainInterfaceAdminController implements Initializable {
             lbUsername.setText(DiLi.getLoggedAccount().getName());
 
         if (fsm.getState() == DiliState.MAIN_INTERFACE) {
-            if (paneItems.getChildren().size() > 0)
-                paneItems.getChildren().remove(0);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+            idLivroInfo = 0;
 
-            Node node;
-            try {
-                node = loader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            clearFilters();
 
-            ScrollPaneBookItemsController spbic = loader.getController();
-            String filter = tfSearch.getText();
-
-            paneItems.getChildren().add(node);
-            spbic.initData(filter.isEmpty() ? "" : filter);
+            updateByFilters();
         }
 
         if (fsm.getState() == DiliState.PROFILE) {
@@ -172,6 +280,25 @@ public class MainInterfaceAdminController implements Initializable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (fsm.getState() == DiliState.BOOK_INFO) {
+            if (paneItems.getChildren().size() > 0)
+                paneItems.getChildren().remove(0);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/admin/bookInfoAdmin.fxml"));
+
+            Node node;
+            try {
+                node = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            BookInfoAdminController spbic = loader.getController();
+
+            paneItems.getChildren().add(node);
+            spbic.initData(fsm.getData().getBookById(idLivroInfo));
         }
     }
 }
