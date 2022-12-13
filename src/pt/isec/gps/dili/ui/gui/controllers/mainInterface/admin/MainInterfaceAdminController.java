@@ -363,7 +363,7 @@ public class MainInterfaceAdminController implements Initializable {
             ToggleGroup tgStatistics = new ToggleGroup();
 
             tbtnBooksDownloads = new ToggleButton("Book's Downloads");
-            tbtnStatisticCostPerEachBook = new ToggleButton("Book's Downloads");
+            tbtnStatisticCostPerEachBook = new ToggleButton("Book's Highest Debt");
             tbtnMostDownloadedBooks = new ToggleButton("Most Downloaded Books");
             tbtnDigitalBookFormats = new ToggleButton("Digital Book Formats");
 

@@ -532,7 +532,7 @@ public class ConnDB {
             stringBuilder.append(" AND (");
             int i = 0;
             for (String filter : filters) {
-                stringBuilder.append(nameField + " LIKE '").append(filter).append("'");
+                stringBuilder.append(nameField).append(" LIKE '").append(filter).append("'");
                 if (i++ != filters.size() - 1)
                     stringBuilder.append(" OR ");
             }
@@ -703,7 +703,7 @@ public class ConnDB {
         return book;
     }
 
-    public int addReview(User user, Book book, int rating, String review) throws SQLException {
+    public int addReview(User user, Book book, int rating, String review) {
         try(Statement statement = dbConn.createStatement()) {
             String sqlQuery = "INSERT INTO rating_review (user_email, book_id, rating, review) VALUES ('" + user.getEmail() + "', '" + book.getId() + "', '" + rating + "', '" + review + "')";
             statement.close();
@@ -731,7 +731,7 @@ public class ConnDB {
         return reviewId;
     }
 
-    public int deleteReview(int id) throws SQLException {
+    public int deleteReview(int id) {
         try(Statement statement = dbConn.createStatement()) {
             String sqlQuery = "UPDATE rating_review SET review='' WHERE id='" + id + "'";
             statement.close();

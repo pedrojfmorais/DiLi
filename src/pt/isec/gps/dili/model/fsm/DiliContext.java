@@ -82,10 +82,6 @@ public class DiliContext {
         pcs.addPropertyChangeListener(property, listener);
     }
 
-    public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(property, listener);
-    }
-
     /**
      * alterar o estado atual
      *

@@ -316,7 +316,7 @@ public class DiLi {
         if (book == null)
             return 0;
 
-        int copies = 0;
+        int copies;
         try {
             copies = connDB.getBookDownloadCounter(book.getId());
         } catch (SQLException e) {
@@ -342,38 +342,47 @@ public class DiLi {
         return result;
     }
 
-    public List<BookPrice> statisticCostPerEachBook(int limit, String order) throws SQLException {
+    public List<BookPrice> statisticCostPerEachBook(int limit, String order) {
 
 
         List<BookPrice> bp = new ArrayList<>();
 
-        ResultSet resultSet = connDB.getStatisticCostPerEachBook(limit, order);
+        ResultSet resultSet;
+        try {
+            resultSet = connDB.getStatisticCostPerEachBook(limit, order);
 
-        while (resultSet.next()) {
 
-            bp.add(new BookPrice(resultSet.getString(1), resultSet.getDouble(2)));
+            while (resultSet.next()) {
+                bp.add(new BookPrice(resultSet.getString(1), resultSet.getDouble(2)));
+            }
 
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        resultSet.close();
         return bp;
     }
 
 
-    public HashMap<String, Integer> statisticsFormatDownloads() throws SQLException {
+    public HashMap<String, Integer> statisticsFormatDownloads() {
 
 
         HashMap<String, Integer> result = new HashMap<>();
 
-        ResultSet resultSet = connDB.getStatisticFormatDownloads();
+        ResultSet resultSet;
+        try {
+            resultSet = connDB.getStatisticFormatDownloads();
 
-        while (resultSet.next()) {
+            while (resultSet.next()) {
+                result.put(resultSet.getString(1), resultSet.getInt(2));
+            }
 
-            result.put(resultSet.getString(1), resultSet.getInt(2));
+            resultSet.close();
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        resultSet.close();
         return result;
 
     }
@@ -383,7 +392,7 @@ public class DiLi {
 
         HashMap<String, Integer> result = new HashMap<>();
 
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             resultSet = connDB.getStatisticAllDownloadedBooks();
 
@@ -403,20 +412,28 @@ public class DiLi {
 
     }
 
-    public HashMap<String, Integer> statisticMostDownloadedBooks(int limit) throws SQLException {
+    public HashMap<String, Integer> statisticMostDownloadedBooks(int limit) {
 
 
         HashMap<String, Integer> result = new HashMap<>();
 
-        ResultSet resultSet = connDB.getStatisticMostDownloadedBooks(limit);
+        ResultSet resultSet;
 
-        while (resultSet.next()) {
+        try {
+            resultSet = connDB.getStatisticMostDownloadedBooks(limit);
 
-            result.put(resultSet.getString(1), resultSet.getInt(2));
 
+            while (resultSet.next()) {
+
+                result.put(resultSet.getString(1), resultSet.getInt(2));
+
+            }
+
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        resultSet.close();
         return result;
 
     }

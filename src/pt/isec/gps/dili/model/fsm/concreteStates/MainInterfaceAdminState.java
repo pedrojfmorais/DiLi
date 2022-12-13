@@ -5,7 +5,6 @@ import pt.isec.gps.dili.model.data.Message;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
