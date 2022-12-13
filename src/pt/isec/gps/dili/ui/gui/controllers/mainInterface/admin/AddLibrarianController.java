@@ -21,7 +21,7 @@ public class AddLibrarianController implements Initializable {
     public BorderPane addLibrarian;
     public TextField tfName;
     public TextField tfEmail;
-    public TextField tfPassword;
+    public PasswordField tfPassword;
     public Button btnConfirm;
     public Button btnCancel;
     public Label lbName;

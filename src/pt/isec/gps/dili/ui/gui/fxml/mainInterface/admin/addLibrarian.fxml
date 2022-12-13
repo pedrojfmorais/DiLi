@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.PasswordField?>
 <BorderPane fx:id="addLibrarian" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" style="-fx-border-color: black; -fx-border-radius: 15px;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.AddLibrarianController">
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
@@ -29,7 +30,7 @@
          <children>
             <TextField fx:id="tfName" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Name" />
             <TextField fx:id="tfEmail" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Email" />
-            <TextField fx:id="tfPassword" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Password" />
+            <PasswordField fx:id="tfPassword" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Password" />
          </children>
       </VBox>
    </center>

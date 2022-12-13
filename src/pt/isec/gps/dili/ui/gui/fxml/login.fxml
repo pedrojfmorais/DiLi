@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.PasswordField?>
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.LoginController">
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -26,7 +27,7 @@
                   <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                      <children>
                         <TextField fx:id="tfEmail" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Email" />
-                        <TextField fx:id="tfPassword" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Password" />
+                        <PasswordField fx:id="tfPassword" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="250.0" promptText="Password" />
                         <Label fx:id="lbError" textFill="RED" />
                      </children>
                   </VBox>

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -23,7 +24,9 @@ public class LoginController implements Initializable {
     @FXML
     private ImageView ivLogo;
     @FXML
-    private TextField tfEmail, tfPassword;
+    private TextField tfEmail;
+    @FXML
+    private PasswordField tfPassword;
     @FXML
     private Label lbError;
     @FXML
