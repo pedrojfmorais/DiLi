@@ -306,6 +306,7 @@ public class ConnDB {
         statement.executeUpdate(sqlQuery);
         statement.close();
     }
+    
 
     public void clearDB(String passcode, boolean bdbf, boolean bg, boolean bl, boolean b, boolean g, boolean bdown) throws SQLException {
         if(passcode.equals("test")) {
@@ -556,6 +557,58 @@ public class ConnDB {
 
         return bookArrayList;
     }
+    public List<String> getAllFiltersGenres() throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name FROM genre, book_genre WHERE genre.id = book_genre.genre_id";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        while(resultSet.next()) {
+            arrayList.add(resultSet.getString(1));
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return arrayList;
+    }
+    public List<String> getAllFiltersLanguages() throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name FROM language, book_language WHERE language.id = book_language.language_id";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        while(resultSet.next()) {
+            arrayList.add(resultSet.getString(1));
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return arrayList;
+    }
+    public List<String> getAllFiltersFormats() throws SQLException {
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT name FROM format";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        while(resultSet.next()) {
+            arrayList.add(resultSet.getString(1));
+        }
+
+        resultSet.close();
+        statement.close();
+
+        return arrayList;
+    }
+
     public ArrayList<Book> listAllBooks(boolean isAdmin) throws SQLException {
 
 
