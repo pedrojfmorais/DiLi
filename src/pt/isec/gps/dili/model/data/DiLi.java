@@ -341,12 +341,47 @@ public class DiLi {
         return result;
     }
 
+
     public HashMap<String, Integer> statisticsFormatDownloads() throws SQLException {
 
 
         HashMap<String, Integer> result = new HashMap<>();
 
         ResultSet resultSet = connDB.getStatisticFormatDownloads();
+
+        while (resultSet.next()) {
+
+            result.put(resultSet.getString(1), resultSet.getInt(2));
+
+        }
+
+        resultSet.close();
+        return result;
+
+    }
+    public HashMap<String, Integer> statisticAllDownloadedBooks() throws SQLException {
+
+
+        HashMap<String, Integer> result = new HashMap<>();
+
+        ResultSet resultSet = connDB.getStatisticAllDownloadedBooks();
+
+        while (resultSet.next()) {
+
+            result.put(resultSet.getString(1), resultSet.getInt(2));
+
+        }
+
+        resultSet.close();
+        return result;
+
+    }
+    public HashMap<String, Integer> statisticMostDownloadedBooks(int limit) throws SQLException {
+
+
+        HashMap<String, Integer> result = new HashMap<>();
+
+        ResultSet resultSet = connDB.getStatisticMostDownloadedBooks(limit);
 
         while (resultSet.next()) {
 

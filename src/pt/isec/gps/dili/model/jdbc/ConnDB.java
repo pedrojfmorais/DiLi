@@ -441,7 +441,30 @@ public class ConnDB {
     public ResultSet getStatisticFormatDownloads() throws SQLException {
 
         Statement statement = dbConn.createStatement();
-        String sqlQuery = "SELECT format, COUNT(*) FROM test GROUP BY format";
+        String sqlQuery = "SELECT format, COUNT(*) FROM book_download GROUP BY format";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        statement.close();
+        resultSet.close();
+        return resultSet;
+    }
+
+    public ResultSet getStatisticAllDownloadedBooks() throws SQLException {
+
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT book.title, COUNT(*) FROM book, book_download WHERE book.id=book_id " +
+                "GROUP BY book_download.book_id " +
+                "ORDER BY 2 DESC";
+        ResultSet resultSet = statement.executeQuery(sqlQuery);
+        statement.close();
+        resultSet.close();
+        return resultSet;
+    }
+    public ResultSet getStatisticMostDownloadedBooks(int limit) throws SQLException {
+
+        Statement statement = dbConn.createStatement();
+        String sqlQuery = "SELECT book.title, COUNT(*) FROM book, book_download WHERE book.id=book_id " +
+                "GROUP BY book_download.book_id " +
+                "ORDER BY 2 DESC LIMIT " + limit;
         ResultSet resultSet = statement.executeQuery(sqlQuery);
         statement.close();
         resultSet.close();
