@@ -19,9 +19,10 @@
                <children>
                   <TextField fx:id="tfSearch" prefHeight="25.0" prefWidth="184.0" promptText="Search ...">
                      <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets />
                      </HBox.margin>
                   </TextField>
+                  <Button fx:id="btnSearch" mnemonicParsing="false" />
                </children>
             </HBox>
             <Region prefHeight="200.0" prefWidth="147.0" HBox.hgrow="ALWAYS" />

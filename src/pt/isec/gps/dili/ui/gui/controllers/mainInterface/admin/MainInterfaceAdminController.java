@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 
 public class MainInterfaceAdminController implements Initializable {
     public VBox vBoxLeft;
+    public Button btnSearch;
     @FXML
     private VBox vBoxFiltersLanguage;
     @FXML
@@ -88,6 +89,7 @@ public class MainInterfaceAdminController implements Initializable {
 
     private void createViews() throws IOException {
         ivLogo.setImage(ImageManager.getImage("logo.png"));
+        btnSearch.setGraphic(ImageManager.getImageView("search.png", 20));
     }
 
     private void registerHandlers() {
@@ -95,30 +97,33 @@ public class MainInterfaceAdminController implements Initializable {
         fsm.addPropertyChangeListener(DiliContext.PROP_BOOK, evt -> update());
         fsm.addPropertyChangeListener(DiliContext.PROP_USER, evt -> update());
 
+        btnSearch.setOnAction(ev -> {
+            if (fsm.getState() != DiliState.MAIN_INTERFACE)
+                fsm.changeState(DiliState.MAIN_INTERFACE.createState(fsm, fsm.getData()));
+
+            if (paneItems.getChildren().size() > 0)
+                paneItems.getChildren().remove(0);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
+
+            Node node;
+            try {
+                node = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            ScrollPaneBookItemsController spbic = loader.getController();
+
+            paneItems.getChildren().add(node);
+            spbic.initData(fsm.getData().search(tfSearch.getText()));
+
+            clearFilters();
+        });
+
         tfSearch.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-
-                if(fsm.getState() != DiliState.MAIN_INTERFACE)
-                    fsm.changeState(DiliState.MAIN_INTERFACE.createState(fsm, fsm.getData()));
-
-                if (paneItems.getChildren().size() > 0)
-                    paneItems.getChildren().remove(0);
-
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/scrollPaneBookItems.fxml"));
-
-                Node node;
-                try {
-                    node = loader.load();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                ScrollPaneBookItemsController spbic = loader.getController();
-
-                paneItems.getChildren().add(node);
-                spbic.initData(fsm.getData().search(tfSearch.getText()));
-
-                clearFilters();
+                btnSearch.fire();
             }
         });
 
@@ -389,10 +394,10 @@ public class MainInterfaceAdminController implements Initializable {
 
                 double value = fsm.getData().copyrightAllBooks();
 
-                if(value > 0.0) {
+                if (value > 0.0) {
                     alert.setContentText(value + "€");
                     alert.setAlertType(Alert.AlertType.WARNING);
-                }else{
+                } else {
                     alert.setContentText("All copyright is paid");
                     alert.setAlertType(Alert.AlertType.INFORMATION);
                 }
