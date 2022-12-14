@@ -3,8 +3,9 @@ package pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -17,13 +18,10 @@ import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ResourceBundle;
 
 public class BookInfoAdminController implements Initializable {
     public Button btnVoltar;
@@ -35,7 +33,6 @@ public class BookInfoAdminController implements Initializable {
     public Label lbLanguage;
     public Label lbSynopsis;
     public Label lbAvailability;
-    public Button btnDownload;
     public Button btnCalculateCopyright;
     public BorderPane bookInfoAdmin;
     public Label lbNumberDownloads;
@@ -108,28 +105,6 @@ public class BookInfoAdminController implements Initializable {
             dialog.getScene().setUserData(fsm);
             dialog.show();
             abc.initData(livro);
-        });
-
-        btnDownload.setOnAction(ev -> {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                //TODO: perguntar formato e não ser só pdf no que está feito
-                try {
-                    Desktop.getDesktop().browse(new URI(livro.getDownloadFiles().get("pdf")));
-                } catch (IOException | URISyntaxException e) {
-                    Alert alert = new Alert(
-                            Alert.AlertType.ERROR,
-                            "",
-                            ButtonType.OK
-                    );
-
-                    alert.setTitle("Error download book");
-                    alert.setHeaderText("Book: " + livro.getTitle() + ", Format: " + "pdf");
-
-                    alert.setContentText("Incorrect link\n" + livro.getDownloadFiles().get("pdf"));
-
-                    alert.showAndWait();
-                }
-            }
         });
     }
 

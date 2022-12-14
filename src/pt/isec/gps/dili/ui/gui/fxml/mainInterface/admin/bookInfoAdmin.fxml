@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bookInfoAdmin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.BookInfoAdminController">
+<BorderPane fx:id="bookInfoAdmin" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="430.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.BookInfoAdminController">
    <top>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -80,7 +80,6 @@
                               <Label fx:id="lbAvailability" text="Label" />
                            </children>
                         </HBox>
-                        <Button fx:id="btnDownload" mnemonicParsing="false" text="Download" />
                         <Label fx:id="lbNumberDownloads" text="Label" />
                         <Region prefHeight="200.0" prefWidth="200.0" />
                         <Button fx:id="btnCalculateCopyright" mnemonicParsing="false" text="Calculate Copyright" />

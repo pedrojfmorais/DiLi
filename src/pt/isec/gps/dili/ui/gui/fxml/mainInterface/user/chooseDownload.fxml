@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="addReview" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" style="-fx-border-color: black; -fx-border-radius: 15px;" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.AddRatingController">
+<BorderPane fx:id="chooseDownload" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="350.0" style="-fx-border-color: black; -fx-border-radius: 15px;" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.ChooseDownloadController">
    <top>
       <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" text="Add Rating">
+            <Label alignment="CENTER" text="Download Book">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -24,14 +24,12 @@
    <center>
       <VBox alignment="CENTER" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER" spacing="10.0">
-               <children>
-                  <Slider fx:id="sliderRating" blockIncrement="1.0" majorTickUnit="1.0" max="5.0" min="1.0" minorTickCount="0" showTickMarks="true" snapToTicks="true" value="1.0" />
-                  <Label fx:id="lbRating" text="Label" />
-               </children>
-            </HBox>
-            <TextArea fx:id="taReview" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="89.0" prefWidth="250.0" promptText="Review" />
+            <ComboBox fx:id="cbFormat" prefWidth="150.0" />
+            <Label fx:id="lbLink" />
          </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
       </VBox>
    </center>
    <bottom>

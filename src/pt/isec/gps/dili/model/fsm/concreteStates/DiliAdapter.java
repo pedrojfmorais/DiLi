@@ -69,4 +69,9 @@ public abstract class DiliAdapter implements IDiliState {
     public Message addReview(Book book, int rating, String review) {
         return null;
     }
+
+    @Override
+    public Message downloadBook(Book book, String format) {
+        return null;
+    }
 }

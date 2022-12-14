@@ -57,6 +57,11 @@ public class BookInfoState extends DiliAdapter {
     }
 
     @Override
+    public Message downloadBook(Book book, String format) {
+        return data.downloadBook(book, format);
+    }
+
+    @Override
     public DiliState getState() {
         return DiliState.BOOK_INFO;
     }

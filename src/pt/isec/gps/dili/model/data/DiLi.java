@@ -257,10 +257,22 @@ public class DiLi {
         }
     }
 
-    public Message downloadBook(Book book, String format) throws SQLException {
-        if (connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
-            connDB.downloadBook(book.getId(), loggedAccount.getEmail(), format);
-            return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
+    public boolean canDownloadBook(Book book) {
+        try {
+            return connDB.canDownloadBook(book.getId(), loggedAccount.getEmail());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Message downloadBook(Book book, String format){
+        try {
+            if (connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
+                connDB.downloadBook(book.getId(), loggedAccount.getEmail(), format);
+                return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return new Message(null, MessageType.ERROR, "Book already downloaded");
     }
@@ -570,5 +582,16 @@ public class DiLi {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Map<String, String> getBookDownloadFile(int bookId){
+        Map<String, String> resultados;
+        try {
+            resultados = connDB.getBookDownloadFile(bookId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resultados;
     }
 }

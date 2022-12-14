@@ -166,4 +166,9 @@ public class DiliContext {
         pcs.firePropertyChange(PROP_BOOK, null, null);
         return message;
     }
+    public Message downloadBook(Book book, String format){
+        Message message = state.downloadBook(book, format);
+        pcs.firePropertyChange(PROP_BOOK, null, null);
+        return message;
+    }
 }

@@ -3,7 +3,9 @@ package pt.isec.gps.dili.ui.gui.controllers.mainInterface.user;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -14,7 +16,6 @@ import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
-import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.AddBookController;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
 import java.io.IOException;
@@ -68,6 +69,21 @@ public class BookInfoUserController implements Initializable {
 
         btnVoltar.setOnAction(ev -> fsm.voltar());
         btnRating.setOnAction(ev -> {
+
+            if(fsm.getData().canDownloadBook(livro)) {
+                Alert alert = new Alert(
+                        Alert.AlertType.ERROR,
+                        "",
+                        ButtonType.OK
+                );
+                alert.setTitle("Error");
+                alert.setHeaderText("User needs to downloaded this book first!");
+
+                alert.showAndWait();
+
+                return;
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/user/addRating.fxml"));
             Stage dialog = new Stage();
             Scene scene = new Scene(new Pane());
@@ -87,6 +103,46 @@ public class BookInfoUserController implements Initializable {
             dialog.getScene().setUserData(fsm);
             dialog.show();
             arc.initData(livro);
+        });
+
+        btnDownload.setOnAction(ev -> {
+
+            if(!fsm.getData().canDownloadBook(livro)) {
+                Alert alert = new Alert(
+                        Alert.AlertType.ERROR,
+                        "",
+                        ButtonType.OK
+                );
+                alert.setTitle("Error");
+                alert.setHeaderText("User has already downloaded this book!");
+
+                alert.showAndWait();
+
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/user/chooseDownload.fxml"));
+            Stage dialog = new Stage();
+            Scene scene = new Scene(new Pane());
+            scene.setUserData(fsm);
+            try {
+                scene.setRoot(loader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            ChooseDownloadController cdc = loader.getController();
+
+            dialog.setScene(scene);
+
+            dialog.initStyle(StageStyle.UNDECORATED);
+            dialog.getIcons().add(ImageManager.getImage("logo.png"));
+            dialog.initOwner(bookInfoUser.getScene().getWindow());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.getScene().setUserData(fsm);
+            dialog.show();
+            cdc.initData(livro);
+
         });
     }
 

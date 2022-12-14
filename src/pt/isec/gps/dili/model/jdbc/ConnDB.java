@@ -98,25 +98,6 @@ public class ConnDB {
         return user;
     }
 
-    /*public User getLibrarian(int id) throws SQLException {
-
-        Statement statement = dbConn.createStatement();
-
-        String sqlQuery = "SELECT * FROM librarian WHERE id='" + id + "'";
-
-        ResultSet resultSet = statement.executeQuery(sqlQuery);
-
-        resultSet.close();
-        statement.close();
-
-        return new User(
-                resultSet.getInt("id"),
-                resultSet.getString("name"),
-                resultSet.getString("email"),
-                UserType.Librarian
-        );
-    }*/
-
     public void insertLibrarianTest(String email, String name, String password, int id) throws SQLException {
         Statement statement = dbConn.createStatement();
 
@@ -567,18 +548,6 @@ public class ConnDB {
         if(!isAdmin)
             sqlQuery += " AND book.availability='1'";
 
-        /*StringBuilder sqlQuery = new StringBuilder("SELECT book.id, title, synopsis, author, availability, costPerDownload, image_path FROM book, genre, book_genre WHERE " +
-                "book.id = book_genre.book_id AND " +
-                "genre.id = book_genre.genre_id AND " +
-                "(");
-
-        int i = 0;
-        for(String filter : filters) {
-            sqlQuery.append("genre.name LIKE '").append(filter).append("'");
-            if(i++ != filters.size()-1)
-                sqlQuery.append(" OR ");
-        }
-        sqlQuery.append(")");*/
         ResultSet resultSet = statement.executeQuery(sqlQuery);
 
         ArrayList<Book> bookArrayList = listBooks(resultSet);

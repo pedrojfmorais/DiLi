@@ -25,5 +25,6 @@ public interface IDiliState {
                            Map<String, String> downloadLink, String imagePath);
 
     Message addReview(Book book, int rating, String review);
+    Message downloadBook(Book book, String format);
     DiliState getState();
 }

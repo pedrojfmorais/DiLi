@@ -1,24 +1,16 @@
 package pt.isec.gps.dili.ui.gui.controllers.mainInterface.user;
 
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pt.isec.gps.dili.model.data.Message;
 import pt.isec.gps.dili.model.data.MessageType;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
-import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
-import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ResourceBundle;
 
 public class AddRatingController implements Initializable {
     public BorderPane addReview;
