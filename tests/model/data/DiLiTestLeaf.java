@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static java.lang.System.exit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -462,7 +463,7 @@ class DiLiTestLeaf {
 
         public static Stream<Arguments> updateLibrarianInfoFail() {
             return Stream.of(
-                    arguments(1, "Marco", "newTestEmail@isec.pt", "!Qq123456789")
+                    arguments(1, "Marco", "newTestEmail", "!Qq123456789")
             );
         }
     }

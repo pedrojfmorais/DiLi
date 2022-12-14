@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class ConnDB {
     private final static String DATABASE_URL = "jdbc:sqlite:DiLi.db";
+    private final static String DATABASE_URL_TEST = "jdbc:sqlite:DiLiTest.db";
     private final Connection dbConn;
 
     public ConnDB() throws SQLException {
@@ -147,7 +148,7 @@ public class ConnDB {
         Statement statement = dbConn.createStatement();
 
         String sqlQuery = "UPDATE librarian SET email='" + email + "', name='" + nome + "', " +
-                "password='" + password + "' WHERE id=" + id;
+                "password='" + password + "' WHERE id='" + id + "'";
         int rowsAffected = statement.executeUpdate(sqlQuery);
         statement.close();
         return rowsAffected;
