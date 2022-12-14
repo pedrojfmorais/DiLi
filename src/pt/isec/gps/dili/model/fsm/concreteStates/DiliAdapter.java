@@ -2,6 +2,7 @@ package pt.isec.gps.dili.model.fsm.concreteStates;
 
 import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
+import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
 import pt.isec.gps.dili.model.fsm.IDiliState;
@@ -61,6 +62,11 @@ public abstract class DiliAdapter implements IDiliState {
     public Message updateBookInfo(int id, String title, String author, String synopsis, String language,
                                   List<String> genres, boolean availability, double costPerDownload,
                                   Map<String, String> downloadLink, String imagePath) {
+        return null;
+    }
+
+    @Override
+    public Message addReview(Book book, int rating, String review) {
         return null;
     }
 }

@@ -3,6 +3,7 @@ package pt.isec.gps.dili.model.fsm;
 import pt.isec.gps.dili.model.data.DiLi;
 import pt.isec.gps.dili.model.data.Message;
 import pt.isec.gps.dili.model.data.MessageType;
+import pt.isec.gps.dili.model.data.book.Book;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -158,6 +159,11 @@ public class DiliContext {
         if (message.getType() == MessageType.SUCCESS)
             pcs.firePropertyChange(PROP_BOOK, null, null);
 
+        return message;
+    }
+    public Message addReview(Book book, int rating, String review){
+        Message message = state.addReview(book, rating, review);
+        pcs.firePropertyChange(PROP_BOOK, null, null);
         return message;
     }
 }

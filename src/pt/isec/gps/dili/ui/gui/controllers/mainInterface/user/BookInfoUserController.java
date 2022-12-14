@@ -1,15 +1,23 @@
 package pt.isec.gps.dili.ui.gui.controllers.mainInterface.user;
 
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import pt.isec.gps.dili.model.data.book.Book;
 import pt.isec.gps.dili.model.fsm.DiliContext;
 import pt.isec.gps.dili.model.fsm.DiliState;
+import pt.isec.gps.dili.ui.gui.controllers.mainInterface.admin.AddBookController;
 import pt.isec.gps.dili.ui.gui.resources.ImageManager;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
@@ -28,6 +36,7 @@ public class BookInfoUserController implements Initializable {
     public Label lbRating;
     public Label lbReviews;
     public ImageView ivStars;
+    public Button btnRating;
     private DiliContext fsm;
     private Book livro;
 
@@ -58,6 +67,27 @@ public class BookInfoUserController implements Initializable {
         fsm.addPropertyChangeListener(DiliContext.PROP_BOOK, evt -> update());
 
         btnVoltar.setOnAction(ev -> fsm.voltar());
+        btnRating.setOnAction(ev -> {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../../../fxml/mainInterface/user/addRating.fxml"));
+            Stage dialog = new Stage();
+            Scene scene = new Scene(new Pane());
+            scene.setUserData(fsm);
+            try {
+                scene.setRoot(loader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            AddRatingController arc = loader.getController();
+            dialog.setScene(scene);
+
+            dialog.initStyle(StageStyle.UNDECORATED);
+            dialog.getIcons().add(ImageManager.getImage("logo.png"));
+            dialog.initOwner(bookInfoUser.getScene().getWindow());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.getScene().setUserData(fsm);
+            dialog.show();
+            arc.initData(livro);
+        });
     }
 
     private void update() {

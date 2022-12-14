@@ -89,16 +89,17 @@
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
                         <Label text="Rating: " />
-                        <ImageView fx:id="ivStars" fitHeight="35.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="ivStars" fitHeight="35.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
                         <Label fx:id="lbRating" text="Label" />
                      </children>
                      <HBox.margin>
                         <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                      </HBox.margin>
                   </HBox>
-                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER">
+                  <Region prefHeight="85.0" prefWidth="121.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER" spacing="10.0">
                      <children>
+                        <Button fx:id="btnRating" mnemonicParsing="false" text="Add Rating" />
                         <Label fx:id="lbReviews" text="Label" />
                      </children>
                      <HBox.margin>
