@@ -167,7 +167,9 @@ public class DiLi {
             return message;
 
         try {
-            connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            if(!connDB.insertBook(title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath))
+                return new Message("language", MessageType.ERROR, "Invalid language.");
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -233,7 +235,8 @@ public class DiLi {
             return message;
 
         try {
-            connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath);
+            if(!connDB.updateBook(id, title, author, synopsis, language, genres, availability, costPerDownload, downloadLink, imagePath))
+                return new Message("language", MessageType.ERROR, "Invalid language.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -256,7 +259,6 @@ public class DiLi {
 
     public Message downloadBook(Book book, String format) throws SQLException {
         if (connDB.canDownloadBook(book.getId(), loggedAccount.getEmail())) {
-            //TODO Download
             connDB.downloadBook(book.getId(), loggedAccount.getEmail(), format);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
@@ -265,7 +267,6 @@ public class DiLi {
 
     public Message downloadBookTest(Book book, String email, String format) throws SQLException {
         if (connDB.canDownloadBook(book.getId(), email)) {
-            //TODO Download
             connDB.downloadBook(book.getId(), email, format);
             return new Message(null, MessageType.SUCCESS, "Book downloaded successfully");
         }
