@@ -28,7 +28,11 @@ public class ScrollPaneBookItemUserController extends Node implements Initializa
 
         this.livro = livro;
 
-        Image img = ImageManager.getExternalImage(livro.getImagePath());
+        Image img = ImageManager.getImage(livro.getImagePath());
+
+        if (img == null)
+            ImageManager.getExternalImage(livro.getImagePath());
+
         if (img == null)
             img = ImageManager.getImage("book_generic.png");
 

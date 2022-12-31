@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -158,7 +159,16 @@ public class BookInfoUserController implements Initializable {
 
             lbSynopsis.setText(livro.getSynopsis());
 
-            ivBookImage.setImage(ImageManager.getImage(livro.getImagePath()));
+            Image img = ImageManager.getImage(livro.getImagePath());
+
+            if (img == null)
+                ImageManager.getExternalImage(livro.getImagePath());
+
+            if (img == null)
+                img = ImageManager.getImage("book_generic.png");
+
+
+            ivBookImage.setImage(img);
 
             StringBuilder sb = new StringBuilder();
             for (var genre : livro.getGenres())

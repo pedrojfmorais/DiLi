@@ -4,6 +4,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -62,7 +63,16 @@ public class AddBookController implements Initializable {
         cbAvailability.setSelected(livro.isAvailability());
 
         imagePath = livro.getImagePath();
-        ivImage.setImage(ImageManager.getImage(imagePath));
+
+        Image img = ImageManager.getImage(livro.getImagePath());
+
+        if (img == null)
+            ImageManager.getExternalImage(livro.getImagePath());
+
+        if (img == null)
+            img = ImageManager.getImage("book_generic.png");
+
+        ivImage.setImage(img);
 
         if(livro.getGenres().size() > 0) {
             tfGenre.setText(livro.getGenres().get(0));
