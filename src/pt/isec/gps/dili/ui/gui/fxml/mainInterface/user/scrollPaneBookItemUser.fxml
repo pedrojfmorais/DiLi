@@ -6,32 +6,34 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="bookInterfaceAdmin" prefHeight="105.0" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.ScrollPaneBookItemUserController">
-   <center>
-      <HBox alignment="CENTER" prefHeight="202.0" prefWidth="532.0" BorderPane.alignment="CENTER">
-         <children>
-            <ImageView fx:id="ivBook" fitHeight="105.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin></ImageView>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-               <children>
-                  <Label fx:id="lbTitle" text="Label" />
-                  <Label fx:id="lbSynopsis" text="Label" />
-               </children>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </VBox>
-            <Region prefHeight="202.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="202.0" prefWidth="248.0" spacing="10.0">
-               <children>
-                  <Button fx:id="btnInfo" mnemonicParsing="false" text="+ INFO" />
-               </children>
-            </HBox>
-         </children></HBox>
-   </center>
+<BorderPane fx:id="bookInterfaceAdmin" prefHeight="105.0" xmlns="http://javafx.com/javafx/17.0.2"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pt.isec.gps.dili.ui.gui.controllers.mainInterface.user.ScrollPaneBookItemUserController">
+    <center>
+        <HBox alignment="CENTER" prefHeight="202.0" prefWidth="532.0" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fx:id="ivBook" fitHeight="105.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true">
+                    <HBox.margin>
+                        <Insets left="10.0"/>
+                    </HBox.margin>
+                </ImageView>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label fx:id="lbTitle" maxWidth="1.7976931348623157E308" text="Label"/>
+                        <Label fx:id="lbSynopsis" maxWidth="1.7976931348623157E308" text="Label"/>
+                    </children>
+                    <HBox.margin>
+                        <Insets left="10.0"/>
+                    </HBox.margin>
+                </VBox>
+                <HBox alignment="CENTER" prefHeight="202.0" prefWidth="248.0" spacing="10.0">
+                    <children>
+                        <Button fx:id="btnInfo" mnemonicParsing="false" text="+ INFO"/>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+    </center>
 </BorderPane>
