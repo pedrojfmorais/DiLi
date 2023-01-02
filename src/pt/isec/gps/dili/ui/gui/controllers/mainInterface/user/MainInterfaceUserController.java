@@ -147,8 +147,7 @@ public class MainInterfaceUserController implements Initializable {
         } else if (tfSearch.getText().isEmpty())
             livros = fsm.getData().search("");
         else
-            return;
-
+            livros = fsm.getData().search(tfSearch.getText());
 
         if (paneItems.getChildren().size() > 0)
             paneItems.getChildren().remove(0);
